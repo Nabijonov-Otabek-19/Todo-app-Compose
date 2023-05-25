@@ -1,5 +1,7 @@
 package uz.gita.contactappcompose.ui.screen.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +46,7 @@ class HomeContactScreen : AndroidScreen() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContactScreenContent(
     viewModel: HomeViewModel
@@ -65,7 +68,11 @@ fun HomeContactScreenContent(
                     ContactItem(
                         fname = it.firstName,
                         lname = it.lastName,
-                        phone = it.phone
+                        phone = it.phone,
+                        modifier = Modifier.combinedClickable(
+                            onClick = { logger(it.firstName) },
+                            onLongClick = {}
+                        )
                     )
                 }
             })

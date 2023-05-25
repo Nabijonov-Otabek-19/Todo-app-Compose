@@ -1,7 +1,6 @@
 package uz.gita.contactappcompose.ui.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -18,10 +17,11 @@ import androidx.compose.ui.unit.sp
 fun ContactItem(
     fname: String,
     lname: String,
-    phone: String
+    phone: String,
+    modifier: Modifier = Modifier
 ) {
 
-    Card {
+    Card(modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
