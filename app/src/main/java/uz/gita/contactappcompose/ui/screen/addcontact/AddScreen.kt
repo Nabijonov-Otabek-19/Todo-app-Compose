@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
@@ -26,9 +28,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import uz.gita.contactappcompose.ui.component.MyTextField
+import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
 import uz.gita.contactappcompose.ui.viewmodel.AddContactViewModel
 import uz.gita.contactappcompose.ui.viewmodel.impl.AddContactViewModelImpl
-import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
 
 class AddContactScreen : AndroidScreen() {
     @Composable
@@ -43,7 +45,7 @@ class AddContactScreen : AndroidScreen() {
 @Composable
 fun AddContactScreenContent(
     viewModel: AddContactViewModel,
-    modifier: Modifier = Modifier.fillMaxSize()
+    modifier: Modifier = Modifier
 ) {
     var fname by remember {
         mutableStateOf("")
@@ -74,23 +76,35 @@ fun AddContactScreenContent(
             horizontalAlignment = Alignment.Start
         ) {
             Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "First name")
-            MyTextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp), value = fname, onValueChange = { fname = it })
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Last name")
-            MyTextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp), value = lname, onValueChange = { lname = it })
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Phone name")
-            MyTextField(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp), value = phone, onValueChange = { phone = it })
+            MyTextField(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                placeholder = "First name", value = fname,
+                onValueChange = { fname = it },
+                keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
+            )
 
-            ElevatedButton(modifier = Modifier
-                .fillMaxWidth()
+            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Last name")
+            MyTextField(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                placeholder = "Last name", value = lname,
+                onValueChange = { lname = it },
+                keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
+            )
+
+            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Phone name")
+            MyTextField(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                placeholder = "Number", value = phone,
+                onValueChange = { phone = it },
+                keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            )
+
+            ElevatedButton(modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp), onClick = {
-                viewModel.addContact(fname, lname, phone)
-                navigator.pop()
+                if (fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
+                    viewModel.addContact(fname, lname, phone)
+                    navigator.pop()
+                }
             }) {
                 Text(text = "Add Contact")
             }
