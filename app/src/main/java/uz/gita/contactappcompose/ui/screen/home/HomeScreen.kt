@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,8 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +25,6 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
 import uz.gita.contactappcompose.ui.screen.addcontact.AddContactScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
@@ -38,7 +37,7 @@ class HomeContactScreen : AndroidScreen() {
     override fun Content() {
         val viewModel: HomeViewModel = getViewModel<HomeViewModelImpl>()
         ContactAppComposeTheme {
-            Surface (modifier = Modifier.fillMaxSize()) {
+            Surface(modifier = Modifier.fillMaxSize()) {
                 HomeContactScreenContent(viewModel)
             }
         }
@@ -49,29 +48,28 @@ class HomeContactScreen : AndroidScreen() {
 fun HomeContactScreenContent(
     viewModel: HomeViewModel
 ) {
-    val contacts: State<List<ContactData>?> = viewModel.contactsLiveData.observeAsState()
-    val contactList: List<ContactData>? = contacts.value
+    val contacts = viewModel.contactsLiveData.observeAsState(listOf())
 
-    logger("Contact list = ${contactList?.size}")
+    logger("Contact list = ${contacts.value.size}")
 
     Box(modifier = Modifier.fillMaxSize()) {
         val navigator = LocalNavigator.currentOrThrow
 
         LazyColumn(content = {
-            if (contactList != null) {
-                itemsIndexed(contactList) { index, contactItem ->
-                    ContactItem(
-                        fname = contactItem.firstName,
-                        lname = contactItem.lastName,
-                        phone = contactItem.phone
-                    )
-                    if (index != contactList.size - 1)
-                        Spacer(modifier = Modifier.size(8.dp))
-                }
+            items(contacts.value) {
+                ContactItem(
+                    fname = it.firstName,
+                    lname = it.lastName,
+                    phone = it.phone
+                )
+                Spacer(modifier = Modifier.size(8.dp))
             }
         })
+
         FloatingActionButton(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd),
             shape = RoundedCornerShape(16.dp),
             containerColor = Color.Blue,
             onClick = { navigator.push(AddContactScreen()) }) {

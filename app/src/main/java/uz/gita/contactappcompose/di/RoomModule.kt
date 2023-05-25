@@ -15,11 +15,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RoomModule {
+
     @Provides
     @Singleton
     fun provideDB(@ApplicationContext context: Context): AppDatabase = Room.databaseBuilder(
         context,
-        AppDatabase::class.java, "contactDatabase"
+        AppDatabase::class.java, "contacts.db"
     ).allowMainThreadQueries().build()
 
     @[Provides Singleton]
