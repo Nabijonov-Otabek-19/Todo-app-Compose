@@ -6,9 +6,8 @@ import uz.gita.contactappcompose.data.source.local.dao.ContactDao
 import uz.gita.contactappcompose.data.source.local.entity.ContactEntity
 
 @Database(entities = [ContactEntity::class], version = 1, exportSchema = false)
-abstract class AppDatabase: RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getContactDao(): ContactDao
-
 
 }
