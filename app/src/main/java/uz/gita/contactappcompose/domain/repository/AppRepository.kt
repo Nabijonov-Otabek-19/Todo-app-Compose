@@ -8,5 +8,5 @@ interface AppRepository {
     fun add(contactData: ContactData)
     fun delete(contactData: ContactData)
     fun update(contactData: ContactData)
-    suspend fun retrieveAllContacts(): Flow<List<ContactData>>
+    fun retrieveAllContacts(): Flow<List<ContactData>>
 }

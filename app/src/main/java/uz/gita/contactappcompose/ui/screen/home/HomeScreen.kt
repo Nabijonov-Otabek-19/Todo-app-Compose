@@ -55,16 +55,20 @@ fun HomeContactScreenContent(
     Box(modifier = Modifier.fillMaxSize()) {
         val navigator = LocalNavigator.currentOrThrow
 
-        LazyColumn(content = {
-            items(contacts.value) {
-                ContactItem(
-                    fname = it.firstName,
-                    lname = it.lastName,
-                    phone = it.phone
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-            }
-        })
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            content = {
+                items(contacts.value) {
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    ContactItem(
+                        fname = it.firstName,
+                        lname = it.lastName,
+                        phone = it.phone
+                    )
+                }
+            })
 
         FloatingActionButton(
             modifier = Modifier

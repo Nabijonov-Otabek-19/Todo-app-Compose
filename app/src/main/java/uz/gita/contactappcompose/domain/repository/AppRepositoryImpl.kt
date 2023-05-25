@@ -1,7 +1,6 @@
 package uz.gita.contactappcompose.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.data.source.local.dao.ContactDao
@@ -23,9 +22,8 @@ class AppRepositoryImpl @Inject constructor(
         dao.update(contactData.toEntity())
     }
 
-    override suspend fun retrieveAllContacts(): Flow<List<ContactData>> = flow {
+    override fun retrieveAllContacts(): Flow<List<ContactData>> =
         dao.retrieveAllContacts().map { list ->
-            emit(list.map { it.toData() })
+            list.map { it.toData() }
         }
-    }
 }
