@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,7 +66,7 @@ fun HomeContactScreenContent(
     val data = remember { mutableStateOf(ContactData(-1, "", "", "")) }
 
     if (showDialog.value) {
-        AlertDialogComponent(viewModel = viewModel, data = data.value, true)
+        AlertDialogComponent(viewModel = viewModel, data = data.value, true, showDialog)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -114,7 +115,8 @@ fun HomeContactScreenContent(
 fun AlertDialogComponent(
     viewModel: HomeViewModel,
     data: ContactData,
-    show: Boolean
+    show: Boolean,
+    showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current
     val openDialog = remember { mutableStateOf(show) }
@@ -131,12 +133,16 @@ fun AlertDialogComponent(
                     onClick = {
                         viewModel.delete(data)
                         openDialog.value = false
+                        showDialog.value = false
                         Toast.makeText(context, "Item deleted", Toast.LENGTH_LONG).show()
                     }
                 ) { Text("Confirm", color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = { openDialog.value = false })
+                TextButton(onClick = {
+                    openDialog.value = false
+                    showDialog.value = false
+                })
                 { Text("Dismiss", color = Color.White) }
             },
             containerColor = colorResource(id = R.color.teal_200),
