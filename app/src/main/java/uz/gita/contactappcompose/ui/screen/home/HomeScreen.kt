@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -42,7 +43,7 @@ import uz.gita.contactappcompose.ui.viewmodel.HomeViewModel
 import uz.gita.contactappcompose.ui.viewmodel.impl.HomeViewModelImpl
 import uz.gita.contactappcompose.utils.logger
 
-class HomeContactScreen : AndroidScreen() {
+class HomeScreen : AndroidScreen() {
     @Composable
     override fun Content() {
         val viewModel: HomeViewModel = getViewModel<HomeViewModelImpl>()
@@ -69,6 +70,7 @@ fun HomeContactScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         val navigator = LocalNavigator.currentOrThrow
+        val context = LocalContext.current
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -82,7 +84,10 @@ fun HomeContactScreenContent(
                         lname = it.lastName,
                         phone = it.phone,
                         modifier = Modifier.combinedClickable(
-                            onClick = { logger(it.firstName) },
+                            onClick = {
+                                logger(it.firstName)
+                                Toast.makeText(context, it.firstName, Toast.LENGTH_SHORT).show()
+                            },
                             onLongClick = {
                                 //viewModel.delete(it)
                                 data.value = it
@@ -95,7 +100,7 @@ fun HomeContactScreenContent(
 
         FloatingActionButton(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(24.dp)
                 .align(Alignment.BottomEnd),
             shape = RoundedCornerShape(16.dp),
             containerColor = Color.Blue,
@@ -116,6 +121,7 @@ fun AlertDialogComponent(
 
     if (openDialog.value) {
         AlertDialog(
+            properties = DialogProperties(dismissOnClickOutside = false),
             onDismissRequest = { openDialog.value = false },
             title = { Text(text = "Warning", color = Color.White) },
             text = { Text("Do you want to delete ?", color = Color.White) },
