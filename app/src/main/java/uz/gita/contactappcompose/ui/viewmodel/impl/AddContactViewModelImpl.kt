@@ -16,4 +16,8 @@ class AddContactViewModelImpl @Inject constructor(
     override fun addContact(fname: String, lname: String, phone: String) {
         repository.add(ContactData(firstName = fname, lastName = lname, phone = phone))
     }
+
+    override fun updateContact(contactData: ContactData) {
+        repository.update(contactData)
+    }
 }

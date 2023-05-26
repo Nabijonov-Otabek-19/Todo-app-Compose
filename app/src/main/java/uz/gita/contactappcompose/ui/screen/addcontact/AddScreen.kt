@@ -27,16 +27,17 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.MyTextField
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
 import uz.gita.contactappcompose.ui.viewmodel.AddContactViewModel
 import uz.gita.contactappcompose.ui.viewmodel.impl.AddContactViewModelImpl
 
-class AddContactScreen : AndroidScreen() {
+class AddScreen(private val updateData: ContactData?) : AndroidScreen() {
     @Composable
     override fun Content() {
         val viewModel: AddContactViewModel = getViewModel<AddContactViewModelImpl>()
-        AddContactScreenContent(viewModel)
+        AddContactScreenContent(viewModel, updateData)
     }
 }
 
@@ -45,30 +46,22 @@ class AddContactScreen : AndroidScreen() {
 @Composable
 fun AddContactScreenContent(
     viewModel: AddContactViewModel,
+    updateData: ContactData?,
     modifier: Modifier = Modifier
 ) {
-    var fname by remember {
-        mutableStateOf("")
-    }
+    var fname by remember { mutableStateOf(updateData?.firstName ?: "") }
+    var lname by remember { mutableStateOf(updateData?.lastName ?: "") }
+    var phone by remember { mutableStateOf(updateData?.phone ?: "") }
 
-    var lname by remember {
-        mutableStateOf("")
-    }
-
-    var phone by remember {
-        mutableStateOf("")
-    }
+    val isUpdate = updateData != null
 
     val navigator = LocalNavigator.currentOrThrow
 
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(title = {
-                Text("My App")
-            })
-        },
-    ) { contentPadding ->
+        topBar = { TopAppBar(title = { Text("Add Contact") }) },
+    )
+    { contentPadding ->
         // Screen content
         Column(
             modifier = Modifier.padding(contentPadding),
@@ -77,7 +70,9 @@ fun AddContactScreenContent(
         ) {
             Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "First name")
             MyTextField(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 placeholder = "First name", value = fname,
                 onValueChange = { fname = it },
                 keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -85,7 +80,9 @@ fun AddContactScreenContent(
 
             Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Last name")
             MyTextField(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 placeholder = "Last name", value = lname,
                 onValueChange = { lname = it },
                 keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -93,16 +90,22 @@ fun AddContactScreenContent(
 
             Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Phone name")
             MyTextField(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 placeholder = "Number", value = phone,
                 onValueChange = { phone = it },
                 keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
 
-            ElevatedButton(modifier = Modifier.fillMaxWidth()
+            ElevatedButton(modifier = Modifier
+                .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp), onClick = {
-                if (fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
+                if (!isUpdate && fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
                     viewModel.addContact(fname, lname, phone)
+                    navigator.pop()
+                } else if (isUpdate && fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
+                    viewModel.updateContact(ContactData(updateData!!.id, fname, lname, phone))
                     navigator.pop()
                 }
             }) {

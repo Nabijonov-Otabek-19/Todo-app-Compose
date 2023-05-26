@@ -38,11 +38,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import uz.gita.contactappcompose.R
 import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
-import uz.gita.contactappcompose.ui.screen.addcontact.AddContactScreen
+import uz.gita.contactappcompose.ui.screen.addcontact.AddScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
 import uz.gita.contactappcompose.ui.viewmodel.HomeViewModel
 import uz.gita.contactappcompose.ui.viewmodel.impl.HomeViewModelImpl
-import uz.gita.contactappcompose.utils.logger
 
 class HomeScreen : AndroidScreen() {
     @Composable
@@ -71,7 +70,6 @@ fun HomeContactScreenContent(
 
     Box(modifier = Modifier.fillMaxSize()) {
         val navigator = LocalNavigator.currentOrThrow
-        val context = LocalContext.current
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -85,10 +83,7 @@ fun HomeContactScreenContent(
                         lname = it.lastName,
                         phone = it.phone,
                         modifier = Modifier.combinedClickable(
-                            onClick = {
-                                logger(it.firstName)
-                                Toast.makeText(context, it.firstName, Toast.LENGTH_SHORT).show()
-                            },
+                            onClick = { navigator.push(AddScreen(it)) },
                             onLongClick = {
                                 //viewModel.delete(it)
                                 data.value = it
@@ -105,7 +100,7 @@ fun HomeContactScreenContent(
                 .align(Alignment.BottomEnd),
             shape = RoundedCornerShape(16.dp),
             containerColor = Color.Blue,
-            onClick = { navigator.push(AddContactScreen()) }) {
+            onClick = { navigator.push(AddScreen(null)) }) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
         }
     }
