@@ -13,9 +13,9 @@ interface ContactDao {
     @Delete
     fun delete(contactEntity: ContactEntity)
 
-    @Update()
+    @Update
     fun update(contactEntity: ContactEntity)
 
-    @Query("Select * from users")
+    @Query("Select * from contacts")
     fun retrieveAllContacts(): Flow<List<ContactEntity>>
 }

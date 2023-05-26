@@ -17,4 +17,11 @@ class HomeViewModelImpl @Inject constructor(
     override val contactsLiveData: LiveData<List<ContactData>>
         get() = repository.retrieveAllContacts().asLiveData()
 
+    override fun delete(contactData: ContactData) {
+        repository.delete(contactData)
+    }
+
+    override fun update(contactData: ContactData) {
+        repository.update(contactData)
+    }
 }

@@ -1,5 +1,6 @@
 package uz.gita.contactappcompose.ui.screen.home
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -12,21 +13,28 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import uz.gita.contactappcompose.R
+import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
 import uz.gita.contactappcompose.ui.screen.addcontact.AddContactScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
@@ -52,8 +60,12 @@ fun HomeContactScreenContent(
     viewModel: HomeViewModel
 ) {
     val contacts = viewModel.contactsLiveData.observeAsState(listOf())
+    val showDialog = remember { mutableStateOf(false) }
+    val data = remember { mutableStateOf(ContactData(-1, "", "", "")) }
 
-    logger("Contact list = ${contacts.value.size}")
+    if (showDialog.value) {
+        AlertDialogComponent(viewModel = viewModel, data = data.value, true)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         val navigator = LocalNavigator.currentOrThrow
@@ -71,7 +83,11 @@ fun HomeContactScreenContent(
                         phone = it.phone,
                         modifier = Modifier.combinedClickable(
                             onClick = { logger(it.firstName) },
-                            onLongClick = {}
+                            onLongClick = {
+                                //viewModel.delete(it)
+                                data.value = it
+                                showDialog.value = true
+                            }
                         )
                     )
                 }
@@ -89,13 +105,36 @@ fun HomeContactScreenContent(
     }
 }
 
-
-@Preview
 @Composable
-fun AddContactScreenPreview() {
-    ContactAppComposeTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-//            AddContactScreenContent()
-        }
+fun AlertDialogComponent(
+    viewModel: HomeViewModel,
+    data: ContactData,
+    show: Boolean
+) {
+    val context = LocalContext.current
+    val openDialog = remember { mutableStateOf(show) }
+
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            title = { Text(text = "Warning", color = Color.White) },
+            text = { Text("Do you want to delete ?", color = Color.White) },
+
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.delete(data)
+                        openDialog.value = false
+                        Toast.makeText(context, "Item deleted", Toast.LENGTH_LONG).show()
+                    }
+                ) { Text("Confirm", color = Color.White) }
+            },
+            dismissButton = {
+                TextButton(onClick = { openDialog.value = false })
+                { Text("Dismiss", color = Color.White) }
+            },
+            containerColor = colorResource(id = R.color.teal_200),
+            textContentColor = Color.White
+        )
     }
 }

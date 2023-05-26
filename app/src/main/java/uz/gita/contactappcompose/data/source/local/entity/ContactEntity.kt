@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import uz.gita.contactappcompose.data.common.ContactData
 
-@Entity(tableName = "users")
+@Entity(tableName = "contacts")
 data class ContactEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
