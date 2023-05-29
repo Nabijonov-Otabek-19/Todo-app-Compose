@@ -85,7 +85,6 @@ fun HomeContactScreenContent(
                         modifier = Modifier.combinedClickable(
                             onClick = { navigator.push(AddScreen(it)) },
                             onLongClick = {
-                                //viewModel.delete(it)
                                 data.value = it
                                 showDialog.value = true
                             }
