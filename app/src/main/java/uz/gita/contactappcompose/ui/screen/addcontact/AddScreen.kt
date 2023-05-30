@@ -2,15 +2,12 @@ package uz.gita.contactappcompose.ui.screen.addcontact
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -21,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -29,15 +25,14 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.MyTextField
-import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
-import uz.gita.contactappcompose.ui.viewmodel.AddContactViewModel
+import uz.gita.contactappcompose.ui.viewmodel.AddEditContract
 import uz.gita.contactappcompose.ui.viewmodel.impl.AddContactViewModelImpl
 
 class AddScreen(private val updateData: ContactData?) : AndroidScreen() {
     @Composable
     override fun Content() {
-        val viewModel: AddContactViewModel = getViewModel<AddContactViewModelImpl>()
-        AddContactScreenContent(viewModel, updateData)
+        val viewModel: AddEditContract.ViewModel = getViewModel<AddContactViewModelImpl>()
+        AddContactScreenContent( viewModel::onEventDispatcher, updateData)
     }
 }
 
@@ -45,9 +40,8 @@ class AddScreen(private val updateData: ContactData?) : AndroidScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddContactScreenContent(
-    viewModel: AddContactViewModel,
-    updateData: ContactData?,
-    modifier: Modifier = Modifier
+    onEventDispatcher: (AddEditContract.Intent) -> Unit,
+    updateData: ContactData?
 ) {
     var fname by remember { mutableStateOf(updateData?.firstName ?: "") }
     var lname by remember { mutableStateOf(updateData?.lastName ?: "") }
@@ -58,11 +52,9 @@ fun AddContactScreenContent(
     val navigator = LocalNavigator.currentOrThrow
 
     Scaffold(
-        modifier = modifier,
         topBar = { TopAppBar(title = { Text("Add Contact") }) },
     )
     { contentPadding ->
-        // Screen content
         Column(
             modifier = Modifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -102,26 +94,15 @@ fun AddContactScreenContent(
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp), onClick = {
                 if (!isUpdate && fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
-                    viewModel.addContact(fname, lname, phone)
+                    onEventDispatcher(AddEditContract.Intent.AddContact(ContactData(firstName = fname, lastName = lname,phone= phone)))
                     navigator.pop()
                 } else if (isUpdate && fname.isNotEmpty() && lname.isNotEmpty() && phone.isNotEmpty()) {
-                    viewModel.updateContact(ContactData(updateData!!.id, fname, lname, phone))
+                    onEventDispatcher(AddEditContract.Intent.UpdateContact(ContactData(updateData!!.id, fname, lname, phone)))
                     navigator.pop()
                 }
             }) {
                 Text(text = "Add Contact")
             }
-        }
-    }
-}
-
-
-@Preview
-@Composable
-fun AddContactScreenPreview() {
-    ContactAppComposeTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-//            AddContactScreenContent()
         }
     }
 }

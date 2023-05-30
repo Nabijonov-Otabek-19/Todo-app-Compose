@@ -1,27 +1,35 @@
 package uz.gita.contactappcompose.ui.viewmodel.impl
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import uz.gita.contactappcompose.data.common.ContactData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import uz.gita.contactappcompose.domain.repository.AppRepository
-import uz.gita.contactappcompose.ui.viewmodel.HomeViewModel
+import uz.gita.contactappcompose.ui.viewmodel.HomeViewContract
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
     private val repository: AppRepository
-) : HomeViewModel, ViewModel() {
+) : HomeViewContract.ViewModel, ViewModel() {
 
-    override val contactsLiveData: LiveData<List<ContactData>>
-        get() = repository.retrieveAllContacts().asLiveData()
-
-    override fun delete(contactData: ContactData) {
-        repository.delete(contactData)
+    init {
+        repository.retrieveAllContacts()
+            .onEach { contacts -> uiState.update { it.copy(contacts = contacts) } }
+            .launchIn(viewModelScope)
     }
 
-    override fun update(contactData: ContactData) {
-        repository.update(contactData)
+    override val uiState = MutableStateFlow(HomeViewContract.UiState())
+
+    override fun onEventDispatcher(intent: HomeViewContract.Intent) {
+        when (intent) {
+            is HomeViewContract.Intent.Delete -> repository.delete(intent.contact)
+            is HomeViewContract.Intent.OpenEditContact -> uiState.update { it.copy(updateData = intent.updateData, editContactState = true) }
+            is HomeViewContract.Intent.OpenAddContact -> uiState.update { it.copy(addContactState = true) }
+            is HomeViewContract.Intent.CloseAddContact -> uiState.update { it.copy(addContactState = false, editContactState = false) }
+        }
     }
 }

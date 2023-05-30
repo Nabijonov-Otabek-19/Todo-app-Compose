@@ -21,7 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,16 +40,17 @@ import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
 import uz.gita.contactappcompose.ui.screen.addcontact.AddScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
-import uz.gita.contactappcompose.ui.viewmodel.HomeViewModel
+import uz.gita.contactappcompose.ui.viewmodel.HomeViewContract
 import uz.gita.contactappcompose.ui.viewmodel.impl.HomeViewModelImpl
 
 class HomeScreen : AndroidScreen() {
     @Composable
     override fun Content() {
-        val viewModel: HomeViewModel = getViewModel<HomeViewModelImpl>()
+        val viewModel: HomeViewContract.ViewModel = getViewModel<HomeViewModelImpl>()
+        val uiState = viewModel.uiState.collectAsState().value
         ContactAppComposeTheme {
             Surface(modifier = Modifier.fillMaxSize()) {
-                HomeContactScreenContent(viewModel)
+                HomeContactScreenContent(uiState = uiState, viewModel::onEventDispatcher)
             }
         }
     }
@@ -58,24 +59,36 @@ class HomeScreen : AndroidScreen() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContactScreenContent(
-    viewModel: HomeViewModel
+    uiState: HomeViewContract.UiState, onEventDispatcher: (HomeViewContract.Intent) -> Unit
 ) {
-    val contacts = viewModel.contactsLiveData.observeAsState(listOf())
+    val navigator = LocalNavigator.currentOrThrow
+
+    if (uiState.addContactState) {
+        navigator.push(AddScreen(null))
+        onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
+    }
+    if (uiState.editContactState) {
+        navigator.push(AddScreen(uiState.updateData))
+        onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
+    }
+
     val showDialog = remember { mutableStateOf(false) }
     val data = remember { mutableStateOf(ContactData(-1, "", "", "")) }
 
     if (showDialog.value) {
-        AlertDialogComponent(viewModel = viewModel, data = data.value, true, showDialog)
+        AlertDialogComponent(
+            onEventDispatcher = onEventDispatcher,
+            data = data.value,
+            true,
+            showDialog
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        val navigator = LocalNavigator.currentOrThrow
-
         LazyColumn(
             modifier = Modifier.padding(horizontal = 8.dp),
             content = {
-                items(contacts.value) {
-
+                items(uiState.contacts) {
                     Spacer(modifier = Modifier.size(8.dp))
 
                     ContactItem(
@@ -83,7 +96,7 @@ fun HomeContactScreenContent(
                         lname = it.lastName,
                         phone = it.phone,
                         modifier = Modifier.combinedClickable(
-                            onClick = { navigator.push(AddScreen(it)) },
+                            onClick = { onEventDispatcher(HomeViewContract.Intent.OpenEditContact(it)) },
                             onLongClick = {
                                 data.value = it
                                 showDialog.value = true
@@ -99,7 +112,7 @@ fun HomeContactScreenContent(
                 .align(Alignment.BottomEnd),
             shape = RoundedCornerShape(16.dp),
             containerColor = Color.Blue,
-            onClick = { navigator.push(AddScreen(null)) }) {
+            onClick = { onEventDispatcher(HomeViewContract.Intent.OpenAddContact) }) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
         }
     }
@@ -107,7 +120,7 @@ fun HomeContactScreenContent(
 
 @Composable
 fun AlertDialogComponent(
-    viewModel: HomeViewModel,
+    onEventDispatcher: (HomeViewContract.Intent) -> Unit,
     data: ContactData,
     show: Boolean,
     showDialog: MutableState<Boolean>
@@ -125,7 +138,7 @@ fun AlertDialogComponent(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.delete(data)
+                        onEventDispatcher(HomeViewContract.Intent.Delete(data))
                         openDialog.value = false
                         showDialog.value = false
                         Toast.makeText(context, "Item deleted", Toast.LENGTH_LONG).show()

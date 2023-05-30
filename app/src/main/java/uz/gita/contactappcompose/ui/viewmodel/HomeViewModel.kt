@@ -1,13 +1,27 @@
 package uz.gita.contactappcompose.ui.viewmodel
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.StateFlow
 import uz.gita.contactappcompose.data.common.ContactData
 
-interface HomeViewModel {
+interface HomeViewContract {
+    sealed interface Intent {
+        class OpenEditContact(val updateData: ContactData) : Intent
+        class Delete(val contact: ContactData) : Intent
 
-    val contactsLiveData: LiveData<List<ContactData>>
+        object OpenAddContact : Intent
+        object CloseAddContact : Intent
+    }
 
-    fun delete(contactData: ContactData)
+    data class UiState(
+        val contacts: List<ContactData> = listOf(),
+        val updateData: ContactData? = null,
+        val editContactState: Boolean = false,
+        val addContactState: Boolean = false
+    )
 
-    fun update(contactData: ContactData)
+    interface ViewModel {
+        val uiState: StateFlow<UiState>
+
+        fun onEventDispatcher(intent: Intent)
+    }
 }
