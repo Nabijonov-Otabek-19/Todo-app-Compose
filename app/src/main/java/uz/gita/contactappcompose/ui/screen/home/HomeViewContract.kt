@@ -10,14 +10,11 @@ interface HomeViewContract {
         class Delete(val contact: ContactData) : Intent
 
         object OpenAddContact : Intent
-       // object CloseAddContact : Intent
     }
 
     data class UiState(
         val contacts: List<ContactData> = listOf(),
-        val updateData: ContactData? = null,
-        /*val editContactState: Boolean = false,
-        val addContactState: Boolean = false*/
+        val updateData: ContactData? = null
     )
 
     interface ViewModel {

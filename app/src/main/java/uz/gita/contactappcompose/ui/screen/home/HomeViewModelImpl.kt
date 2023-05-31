@@ -28,12 +28,6 @@ class HomeViewModelImpl @Inject constructor(
     override fun onEventDispatcher(intent: HomeViewContract.Intent) {
         when (intent) {
             is HomeViewContract.Intent.Delete -> repository.delete(intent.contact)
-            /*is HomeViewContract.Intent.OpenEditContact -> uiState.update {
-                it.copy(updateData = intent.updateData, editContactState = true)
-            }*/
-
-            //is HomeViewContract.Intent.OpenAddContact -> uiState.update { it.copy(addContactState = true) }
-
             is HomeViewContract.Intent.OpenEditContact -> {
                 viewModelScope.launch {
                     direction.navigateToAddEditScreen(data = intent.updateData)
@@ -45,13 +39,6 @@ class HomeViewModelImpl @Inject constructor(
                     direction.navigateToAddEditScreen(data = null)
                 }
             }
-
-            /*is HomeViewContract.Intent.CloseAddContact -> uiState.update {
-                it.copy(
-                    addContactState = false,
-                    editContactState = false
-                )
-            }*/
         }
     }
 }

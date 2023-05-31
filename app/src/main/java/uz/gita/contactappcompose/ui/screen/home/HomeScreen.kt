@@ -33,12 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import uz.gita.contactappcompose.R
 import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
-import uz.gita.contactappcompose.ui.screen.addcontact.AddScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
 import uz.gita.contactappcompose.utils.logger
 
@@ -61,16 +58,6 @@ fun HomeContactScreenContent(
     uiState: HomeViewContract.UiState,
     onEventDispatcher: (intent: HomeViewContract.Intent) -> Unit
 ) {
-    val navigator = LocalNavigator.currentOrThrow
-
-    /* if (uiState.addContactState) {
-         navigator.push(AddScreen(null))
-         onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
-     }
-     if (uiState.editContactState) {
-         navigator.push(AddScreen(uiState.updateData))
-         onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
-     }*/
 
     val showDialog = remember { mutableStateOf(false) }
     val data = remember { mutableStateOf(ContactData(-1, "", "", "")) }
