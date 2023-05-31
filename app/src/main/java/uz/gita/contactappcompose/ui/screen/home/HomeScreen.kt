@@ -40,8 +40,6 @@ import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
 import uz.gita.contactappcompose.ui.screen.addcontact.AddScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
-import uz.gita.contactappcompose.ui.viewmodel.HomeViewContract
-import uz.gita.contactappcompose.ui.viewmodel.impl.HomeViewModelImpl
 
 class HomeScreen : AndroidScreen() {
     @Composable

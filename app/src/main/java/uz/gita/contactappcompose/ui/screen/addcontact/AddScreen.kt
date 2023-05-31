@@ -25,8 +25,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.MyTextField
-import uz.gita.contactappcompose.ui.viewmodel.AddEditContract
-import uz.gita.contactappcompose.ui.viewmodel.impl.AddContactViewModelImpl
 
 class AddScreen(private val updateData: ContactData?) : AndroidScreen() {
     @Composable

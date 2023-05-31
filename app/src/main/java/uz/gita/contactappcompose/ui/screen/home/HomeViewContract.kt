@@ -1,9 +1,10 @@
-package uz.gita.contactappcompose.ui.viewmodel
+package uz.gita.contactappcompose.ui.screen.home
 
 import kotlinx.coroutines.flow.StateFlow
 import uz.gita.contactappcompose.data.common.ContactData
 
 interface HomeViewContract {
+
     sealed interface Intent {
         class OpenEditContact(val updateData: ContactData) : Intent
         class Delete(val contact: ContactData) : Intent
@@ -21,7 +22,6 @@ interface HomeViewContract {
 
     interface ViewModel {
         val uiState: StateFlow<UiState>
-
         fun onEventDispatcher(intent: Intent)
     }
 }

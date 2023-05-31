@@ -1,8 +1,9 @@
-package uz.gita.contactappcompose.ui.viewmodel
+package uz.gita.contactappcompose.ui.screen.addcontact
 
 import uz.gita.contactappcompose.data.common.ContactData
 
 interface AddEditContract {
+
     sealed interface Intent {
         class AddContact(val addContactData: ContactData) : Intent
         class UpdateContact(val updateContactData: ContactData) : Intent
