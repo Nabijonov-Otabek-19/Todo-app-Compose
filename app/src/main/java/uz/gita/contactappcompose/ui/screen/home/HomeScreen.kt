@@ -40,6 +40,7 @@ import uz.gita.contactappcompose.data.common.ContactData
 import uz.gita.contactappcompose.ui.component.ContactItem
 import uz.gita.contactappcompose.ui.screen.addcontact.AddScreen
 import uz.gita.contactappcompose.ui.theme.ContactAppComposeTheme
+import uz.gita.contactappcompose.utils.logger
 
 class HomeScreen : AndroidScreen() {
     @Composable
@@ -57,18 +58,19 @@ class HomeScreen : AndroidScreen() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContactScreenContent(
-    uiState: HomeViewContract.UiState, onEventDispatcher: (HomeViewContract.Intent) -> Unit
+    uiState: HomeViewContract.UiState,
+    onEventDispatcher: (intent: HomeViewContract.Intent) -> Unit
 ) {
     val navigator = LocalNavigator.currentOrThrow
 
-    if (uiState.addContactState) {
-        navigator.push(AddScreen(null))
-        onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
-    }
-    if (uiState.editContactState) {
-        navigator.push(AddScreen(uiState.updateData))
-        onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
-    }
+    /* if (uiState.addContactState) {
+         navigator.push(AddScreen(null))
+         onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
+     }
+     if (uiState.editContactState) {
+         navigator.push(AddScreen(uiState.updateData))
+         onEventDispatcher(HomeViewContract.Intent.CloseAddContact)
+     }*/
 
     val showDialog = remember { mutableStateOf(false) }
     val data = remember { mutableStateOf(ContactData(-1, "", "", "")) }
@@ -94,7 +96,10 @@ fun HomeContactScreenContent(
                         lname = it.lastName,
                         phone = it.phone,
                         modifier = Modifier.combinedClickable(
-                            onClick = { onEventDispatcher(HomeViewContract.Intent.OpenEditContact(it)) },
+                            onClick = {
+                                logger("Item click")
+                                onEventDispatcher(HomeViewContract.Intent.OpenEditContact(it))
+                            },
                             onLongClick = {
                                 data.value = it
                                 showDialog.value = true
@@ -110,7 +115,9 @@ fun HomeContactScreenContent(
                 .align(Alignment.BottomEnd),
             shape = RoundedCornerShape(16.dp),
             containerColor = Color.Blue,
-            onClick = { onEventDispatcher(HomeViewContract.Intent.OpenAddContact) }) {
+            onClick = {
+                logger("Action button")
+                onEventDispatcher(HomeViewContract.Intent.OpenAddContact) }) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
         }
     }
@@ -118,7 +125,7 @@ fun HomeContactScreenContent(
 
 @Composable
 fun AlertDialogComponent(
-    onEventDispatcher: (HomeViewContract.Intent) -> Unit,
+    onEventDispatcher: (intent: HomeViewContract.Intent) -> Unit,
     data: ContactData,
     show: Boolean,
     showDialog: MutableState<Boolean>

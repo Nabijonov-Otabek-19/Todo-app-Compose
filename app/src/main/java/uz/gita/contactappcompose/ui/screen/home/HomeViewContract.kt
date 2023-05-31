@@ -10,18 +10,22 @@ interface HomeViewContract {
         class Delete(val contact: ContactData) : Intent
 
         object OpenAddContact : Intent
-        object CloseAddContact : Intent
+       // object CloseAddContact : Intent
     }
 
     data class UiState(
         val contacts: List<ContactData> = listOf(),
         val updateData: ContactData? = null,
-        val editContactState: Boolean = false,
-        val addContactState: Boolean = false
+        /*val editContactState: Boolean = false,
+        val addContactState: Boolean = false*/
     )
 
     interface ViewModel {
         val uiState: StateFlow<UiState>
         fun onEventDispatcher(intent: Intent)
+    }
+
+    interface Direction{
+        suspend fun navigateToAddEditScreen(data: ContactData?)
     }
 }

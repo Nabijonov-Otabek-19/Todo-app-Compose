@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import uz.gita.contactappcompose.domain.repository.AppRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val direction: HomeDirection
 ) : HomeViewContract.ViewModel, ViewModel() {
 
     override val uiState = MutableStateFlow(HomeViewContract.UiState())
@@ -26,20 +28,30 @@ class HomeViewModelImpl @Inject constructor(
     override fun onEventDispatcher(intent: HomeViewContract.Intent) {
         when (intent) {
             is HomeViewContract.Intent.Delete -> repository.delete(intent.contact)
-            is HomeViewContract.Intent.OpenEditContact -> uiState.update {
-                it.copy(
-                    updateData = intent.updateData,
-                    editContactState = true
-                )
+            /*is HomeViewContract.Intent.OpenEditContact -> uiState.update {
+                it.copy(updateData = intent.updateData, editContactState = true)
+            }*/
+
+            //is HomeViewContract.Intent.OpenAddContact -> uiState.update { it.copy(addContactState = true) }
+
+            is HomeViewContract.Intent.OpenEditContact -> {
+                viewModelScope.launch {
+                    direction.navigateToAddEditScreen(data = intent.updateData)
+                }
             }
 
-            is HomeViewContract.Intent.OpenAddContact -> uiState.update { it.copy(addContactState = true) }
-            is HomeViewContract.Intent.CloseAddContact -> uiState.update {
+            is HomeViewContract.Intent.OpenAddContact -> {
+                viewModelScope.launch {
+                    direction.navigateToAddEditScreen(data = null)
+                }
+            }
+
+            /*is HomeViewContract.Intent.CloseAddContact -> uiState.update {
                 it.copy(
                     addContactState = false,
                     editContactState = false
                 )
-            }
+            }*/
         }
     }
 }
