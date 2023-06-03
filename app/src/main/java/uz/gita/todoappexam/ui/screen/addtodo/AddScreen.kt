@@ -82,6 +82,7 @@ fun AddContactScreenContent(
 
     val context = LocalContext.current
     val navigator = LocalNavigator.currentOrThrow
+    val currentDate = LocalDate.now()
 
     val focusManager = LocalFocusManager.current
     val dateDialogState = rememberMaterialDialogState()
@@ -227,7 +228,8 @@ fun AddContactScreenContent(
                                 )
                             )
                         )
-                    } else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
+                    }
+                    else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
                         onEventDispatcher(
                             AddEditContract.Intent.UpdateContact(
                                 TodoData(
@@ -294,7 +296,11 @@ fun AddContactScreenContent(
             datepicker(
                 initialDate = LocalDate.now(),
                 title = "Pick a date",
-                yearRange = IntRange(LocalDate.now().year, LocalDate.now().year + 20)
+                yearRange = IntRange(LocalDate.now().year, LocalDate.now().year + 20),
+                allowedDateValidator = {
+                    it.monthValue >= currentDate.monthValue
+                            && it.dayOfMonth >= currentDate.dayOfMonth
+                }
             ) {
                 date = it.toString()
             }
