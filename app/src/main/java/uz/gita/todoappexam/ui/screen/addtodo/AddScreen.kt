@@ -228,8 +228,7 @@ fun AddContactScreenContent(
                                 )
                             )
                         )
-                    }
-                    else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
+                    } else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
                         onEventDispatcher(
                             AddEditContract.Intent.UpdateContact(
                                 TodoData(
@@ -279,7 +278,7 @@ fun AddContactScreenContent(
                         .setInitialDelay(delayInSeconds, TimeUnit.SECONDS)
                         .build()
 
-                    WorkManager.getInstance(context).enqueue(request)
+                    if (delayInSeconds > 0) WorkManager.getInstance(context).enqueue(request)
                     navigator.pop()
                 }) {
                 Text(text = "Add")

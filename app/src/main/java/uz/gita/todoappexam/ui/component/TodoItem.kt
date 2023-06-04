@@ -2,22 +2,23 @@ package uz.gita.todoappexam.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.Date
-import java.util.TimeZone
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Calendar
 
 @Composable
 fun TodoItem(
@@ -27,6 +28,30 @@ fun TodoItem(
     time: String,
     modifier: Modifier = Modifier
 ) {
+
+    val userSelectedDateTime = Calendar.getInstance()
+
+    val chosenYear = date.substring(0, 4).toInt()
+    val chosenMonth = date.substring(5, 7).toInt()
+    val chosenDay = date.substring(8).toInt()
+
+    val chosenHour = time.substring(0, 2).toInt()
+    val chosenMin = time.substring(3).toInt()
+
+    userSelectedDateTime.set(
+        chosenYear,
+        chosenMonth,
+        chosenDay,
+        chosenHour,
+        chosenMin
+    )
+    val todayDateTime = Calendar.getInstance()
+    todayDateTime.set(
+        LocalDateTime.now().year,
+        LocalDate.now().monthValue,
+        LocalDateTime.now().dayOfMonth,
+        LocalDateTime.now().hour, LocalDateTime.now().minute
+    )
 
     Card(modifier = modifier) {
         Column(
@@ -41,7 +66,10 @@ fun TodoItem(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                style = if (userSelectedDateTime < todayDateTime) TextStyle(
+                    textDecoration = TextDecoration.LineThrough
+                ) else TextStyle()
             )
 
             Text(
@@ -83,5 +111,5 @@ fun TodoItem(
 @Composable
 @Preview
 fun ContactItemPreview() {
-    TodoItem(title = "David", description = "Watson", date = "2023-06-03", time = "18:00")
+    TodoItem(title = "David", description = "Watson", date = "2023-06-04", time = "18:00")
 }
