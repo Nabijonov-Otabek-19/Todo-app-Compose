@@ -1,6 +1,7 @@
 package uz.gita.todoappexam.workmanager
 
 import android.Manifest
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -30,6 +31,7 @@ class NotificationHelper(val context: Context) {
                 CHANNEL_ID, CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+                .apply { setSound(soundUri, Notification.AUDIO_ATTRIBUTES_DEFAULT) }
 
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
