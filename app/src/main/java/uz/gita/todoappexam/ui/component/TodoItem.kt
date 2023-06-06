@@ -1,21 +1,19 @@
 package uz.gita.todoappexam.ui.component
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import uz.gita.todoappexam.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Calendar
@@ -59,24 +57,38 @@ fun TodoItem(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Text(
-                text = title,
-                color = Color.Black,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
+
+            Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .fillMaxWidth(),
-                style = if (userSelectedDateTime < todayDateTime) TextStyle(
-                    textDecoration = TextDecoration.LineThrough
-                ) else TextStyle()
-            )
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .width(0.dp)
+                        .weight(1f),
+                    style = if (userSelectedDateTime < todayDateTime) TextStyle(
+                        textDecoration = TextDecoration.LineThrough
+                    ) else TextStyle()
+                )
+
+                Image(
+                    painter = painterResource(
+                        id =
+                        if (userSelectedDateTime < todayDateTime) R.drawable.ic_done
+                        else R.drawable.ic_time
+                    ),
+                    contentDescription = null
+                )
+            }
 
             Text(
                 text = description,
-                color = Color.Black,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Black,
                 modifier = Modifier
                     .padding(vertical = 4.dp)
                     .fillMaxWidth()
@@ -87,7 +99,6 @@ fun TodoItem(
             ) {
                 Text(
                     text = date,
-                    color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -96,7 +107,6 @@ fun TodoItem(
 
                 Text(
                     text = time,
-                    color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier

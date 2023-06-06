@@ -2,12 +2,8 @@ package uz.gita.todoappexam.data.source.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import uz.gita.todoappexam.data.common.DateTimeConverter
 import uz.gita.todoappexam.data.common.TodoData
-import java.time.LocalDate
-import java.time.LocalTime
-import java.util.Date
-import java.util.TimeZone
+import java.util.UUID
 
 @Entity(tableName = "todos")
 data class TodoEntity(
@@ -16,9 +12,10 @@ data class TodoEntity(
     val title: String,
     val description: String,
     val date: String,
-    val time: String
+    val time: String,
+    val workId: UUID
 ) {
     fun toData() = TodoData(
-        id, title, description, date, time
+        id, title, description, date, time, workId
     )
 }

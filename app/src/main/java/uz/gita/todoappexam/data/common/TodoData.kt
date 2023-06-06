@@ -1,19 +1,17 @@
 package uz.gita.todoappexam.data.common
 
 import uz.gita.todoappexam.data.source.local.entity.TodoEntity
-import java.time.LocalDate
-import java.time.LocalTime
-import java.util.Date
-import java.util.TimeZone
+import java.util.UUID
 
 data class TodoData(
     val id: Long = 0,
     val title: String,
     val description: String,
     val date: String,
-    val time: String
+    val time: String,
+    val workId: UUID
 ) {
     fun toEntity() = TodoEntity(
-        id, title, description, date, time
+        id, title, description, date, time, workId
     )
 }

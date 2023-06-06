@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -50,6 +49,8 @@ import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.ui.component.TodoItem
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
+import uz.gita.todoappexam.workmanager.cancelWork
+import java.util.UUID
 
 class HomeScreen : AndroidScreen() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +96,9 @@ fun HomeContactScreenContent(
     modifier: Modifier = Modifier
 ) {
     val showDialog = remember { mutableStateOf(false) }
-    val data = remember { mutableStateOf(TodoData(-1, "", "", "", "")) }
+    val data = remember {
+        mutableStateOf(TodoData(-1, "", "", "", "", UUID.randomUUID()))
+    }
 
     if (showDialog.value) {
         AlertDialogComponent(
@@ -176,6 +179,7 @@ fun AlertDialogComponent(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        cancelWork(context, data.workId)
                         onEventDispatcher(HomeViewContract.Intent.Delete(data))
                         openDialog.value = false
                         showDialog.value = false
@@ -198,7 +202,7 @@ fun AlertDialogComponent(
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = true)
+//@Preview(showSystemUi = true)
 @Composable
 fun ContentPreview() {
     Scaffold(

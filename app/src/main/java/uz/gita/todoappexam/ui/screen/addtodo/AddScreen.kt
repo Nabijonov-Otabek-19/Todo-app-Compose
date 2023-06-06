@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
@@ -51,12 +50,12 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.ui.component.MyTextField
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
-import uz.gita.todoappexam.utils.logger
 import uz.gita.todoappexam.workmanager.MyWorker
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Calendar
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class AddScreen(private val updateData: TodoData?) : AndroidScreen() {
@@ -77,6 +76,7 @@ fun AddContactScreenContent(
     var description by remember { mutableStateOf(updateData?.description ?: "") }
     var date by remember { mutableStateOf(updateData?.date ?: "") }
     var time by remember { mutableStateOf(updateData?.time ?: "") }
+    val workId by remember { mutableStateOf(updateData?.workId ?: UUID.randomUUID()) }
 
     val isUpdate = updateData != null
 
@@ -224,7 +224,8 @@ fun AddContactScreenContent(
                                     title = title,
                                     description = description,
                                     date = date,
-                                    time = time
+                                    time = time,
+                                    workId = workId
                                 )
                             )
                         )
@@ -236,7 +237,8 @@ fun AddContactScreenContent(
                                     title,
                                     description,
                                     date,
-                                    time
+                                    time,
+                                    workId
                                 )
                             )
                         )
@@ -269,11 +271,9 @@ fun AddContactScreenContent(
                     val delayInSeconds =
                         (userSelectedDateTime.timeInMillis / 1000L) - (todayDateTime.timeInMillis / 1000L)
 
-                    logger("Delay sec $delayInSeconds")
-                    logger("Today date time = $todayDateTime")
-
                     val request = OneTimeWorkRequestBuilder<MyWorker>()
                         .setConstraints(constraint)
+                        .setId(workId)
                         .setInputData(workDataOf("title" to title, "desc" to description))
                         .setInitialDelay(delayInSeconds, TimeUnit.SECONDS)
                         .build()
@@ -322,7 +322,7 @@ fun AddContactScreenContent(
     }
 }
 
-@Preview(showSystemUi = true)
+//@Preview(showSystemUi = true)
 @Composable
 fun ContentPreview() {
     TodoAppTheme {
