@@ -1,8 +1,11 @@
 package uz.gita.todoappexam
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,6 +26,11 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationHandler: NavigationHandler
 
+    private val myPermissioneRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,6 +40,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        myPermissioneRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+
                     Navigator(screen = HomeScreen()) { navigator ->
                         LaunchedEffect(key1 = navigator) {
                             navigationHandler.navigationBuffer.onEach {

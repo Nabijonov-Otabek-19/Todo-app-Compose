@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -20,6 +22,7 @@ class NotificationHelper(val context: Context) {
     private val CHANNEL_ID = "id"
     private val CHANNEL_NAME = "Todo Reminder Notification"
     private val NOTIFICATION_ID = 1
+    private val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -45,7 +48,8 @@ class NotificationHelper(val context: Context) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(desc)
-            .setVibrate(LongArray(2))
+            .setSound(soundUri)
+            .setVibrate(LongArray(10))
             .setSmallIcon(R.drawable.app_logo)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
