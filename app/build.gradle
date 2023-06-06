@@ -89,7 +89,15 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.5.1'
 
     // Coroutine
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
+
+    // MVI orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:4.6.1")
+    implementation("org.orbit-mvi:orbit-compose:4.6.1")
+
+    // Lifecycle ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
 
     // time/date pickers
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
