@@ -16,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -49,7 +49,6 @@ import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.ui.component.MyTextField
-import uz.gita.todoappexam.ui.theme.TodoAppTheme
 import uz.gita.todoappexam.workmanager.MyWorker
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -278,7 +277,9 @@ fun AddContactScreenContent(
                         .setInitialDelay(delayInSeconds, TimeUnit.SECONDS)
                         .build()
 
-                    if (delayInSeconds > 0) WorkManager.getInstance(context).enqueue(request)
+
+                    WorkManager.getInstance(context)
+                        .enqueueUniqueWork(workId.toString(), ExistingWorkPolicy.REPLACE, request)
                     navigator.pop()
                 }) {
                 Text(text = "Add")
@@ -318,19 +319,6 @@ fun AddContactScreenContent(
             ) {
                 time = it.toString()
             }
-        }
-    }
-}
-
-//@Preview(showSystemUi = true)
-@Composable
-fun ContentPreview() {
-    TodoAppTheme {
-        Surface {
-            AddContactScreenContent(
-                onEventDispatcher = {},
-                updateData = null
-            )
         }
     }
 }

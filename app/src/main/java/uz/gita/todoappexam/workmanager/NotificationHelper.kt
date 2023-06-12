@@ -17,7 +17,9 @@ import androidx.core.app.NotificationManagerCompat
 import uz.gita.todoappexam.MainActivity
 import uz.gita.todoappexam.R
 import uz.gita.todoappexam.utils.logger
+import javax.inject.Singleton
 
+@Singleton
 class NotificationHelper(val context: Context) {
 
     private val CHANNEL_ID = "id"
