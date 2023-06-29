@@ -20,11 +20,6 @@ interface HomeViewContract {
         val updateData: TodoData? = null
     )
 
-    sealed interface UiState1 {
-        data class Contacts(val contacts: List<TodoData>): UiState1
-        data class UpdateData(val updateData: TodoData?): UiState1
-    }
-
     interface ViewModel {
         val uiState: StateFlow<UiState>
         fun onEventDispatcher(intent: Intent)

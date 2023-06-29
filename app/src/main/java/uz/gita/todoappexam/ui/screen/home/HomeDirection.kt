@@ -2,7 +2,7 @@ package uz.gita.todoappexam.ui.screen.home
 
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.navigation.AppNavigator
-import uz.gita.todoappexam.ui.screen.addtodo.AddScreen
+import uz.gita.todoappexam.ui.screen.add.AddScreen
 import javax.inject.Inject
 
 class HomeDirection @Inject constructor(

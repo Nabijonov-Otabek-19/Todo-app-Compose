@@ -1,44 +1,20 @@
-package uz.gita.todoappexam.ui.screen.addtodo
+package uz.gita.todoappexam.ui.screen.add
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.*
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -49,19 +25,22 @@ import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.ui.component.MyTextField
-import uz.gita.todoappexam.workmanager.MyWorker
+import uz.gita.todoappexam.ui.theme.TodoAppTheme
+import uz.gita.todoappexam.workmanager.setWork
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.Calendar
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 class AddScreen(private val updateData: TodoData?) : AndroidScreen() {
     @Composable
     override fun Content() {
         val viewModel: AddEditContract.ViewModel = getViewModel<AddTodoViewModelImpl>()
-        AddContactScreenContent(viewModel::onEventDispatcher, updateData)
+
+        TodoAppTheme {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                AddContactScreenContent(viewModel::onEventDispatcher, updateData)
+            }
+        }
     }
 }
 
@@ -86,12 +65,6 @@ fun AddContactScreenContent(
     val focusManager = LocalFocusManager.current
     val dateDialogState = rememberMaterialDialogState()
     val timeDialogState = rememberMaterialDialogState()
-
-
-    val constraint = Constraints.Builder()
-        .setRequiresCharging(false)
-        .setRequiresBatteryNotLow(true)
-        .build()
 
     Scaffold(topBar = { TopAppBar(title = { Text("Add Todo") }) })
     { contentPadding ->
@@ -191,9 +164,7 @@ fun AddContactScreenContent(
                         containerColor = Color.White
                     ),
                     trailingIcon = {
-                        IconButton(onClick = {
-                            timeDialogState.show()
-                        }) {
+                        IconButton(onClick = { timeDialogState.show() }) {
                             Icon(
                                 imageVector = Icons.Filled.DateRange,
                                 contentDescription = ""
@@ -211,12 +182,13 @@ fun AddContactScreenContent(
                 )
             }
 
-
             ElevatedButton(modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp),
                 onClick = {
-                    if (!isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
+                    if (!isUpdate && title.isNotEmpty() && description.isNotEmpty()
+                        && time.isNotEmpty() && date.isNotEmpty()
+                    ) {
                         onEventDispatcher(
                             AddEditContract.Intent.AddContact(
                                 TodoData(
@@ -228,7 +200,13 @@ fun AddContactScreenContent(
                                 )
                             )
                         )
-                    } else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()) {
+                        setWork(context, date, time, title, description, workId)
+                        navigator.pop()
+
+                    }
+                    else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()
+                        && time.isNotEmpty() && date.isNotEmpty()
+                    ) {
                         onEventDispatcher(
                             AddEditContract.Intent.UpdateContact(
                                 TodoData(
@@ -241,46 +219,10 @@ fun AddContactScreenContent(
                                 )
                             )
                         )
+                        setWork(context, date, time, title, description, workId)
+                        navigator.pop()
+
                     }
-
-                    val userSelectedDateTime = Calendar.getInstance()
-
-                    val chosenYear = date.substring(0, 4).toInt()
-                    val chosenMonth = date.substring(5, 7).toInt()
-                    val chosenDay = date.substring(8).toInt()
-
-                    val chosenHour = time.substring(0, 2).toInt()
-                    val chosenMin = time.substring(3).toInt()
-
-                    userSelectedDateTime.set(
-                        chosenYear,
-                        chosenMonth,
-                        chosenDay,
-                        chosenHour,
-                        chosenMin
-                    )
-                    val todayDateTime = Calendar.getInstance()
-                    todayDateTime.set(
-                        LocalDateTime.now().year,
-                        LocalDate.now().monthValue,
-                        LocalDateTime.now().dayOfMonth,
-                        LocalDateTime.now().hour, LocalDateTime.now().minute
-                    )
-
-                    val delayInSeconds =
-                        (userSelectedDateTime.timeInMillis / 1000L) - (todayDateTime.timeInMillis / 1000L)
-
-                    val request = OneTimeWorkRequestBuilder<MyWorker>()
-                        .setConstraints(constraint)
-                        .setId(workId)
-                        .setInputData(workDataOf("title" to title, "desc" to description))
-                        .setInitialDelay(delayInSeconds, TimeUnit.SECONDS)
-                        .build()
-
-
-                    WorkManager.getInstance(context)
-                        .enqueueUniqueWork(workId.toString(), ExistingWorkPolicy.REPLACE, request)
-                    navigator.pop()
                 }) {
                 Text(text = "Add")
             }

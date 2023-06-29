@@ -1,4 +1,4 @@
-package uz.gita.todoappexam.ui.screen.addtodo
+package uz.gita.todoappexam.ui.screen.add
 
 import uz.gita.todoappexam.data.common.TodoData
 

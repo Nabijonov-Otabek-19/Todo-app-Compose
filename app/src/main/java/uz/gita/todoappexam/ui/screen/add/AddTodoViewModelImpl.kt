@@ -1,4 +1,4 @@
-package uz.gita.todoappexam.ui.screen.addtodo
+package uz.gita.todoappexam.ui.screen.add
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

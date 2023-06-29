@@ -1,6 +1,5 @@
 package uz.gita.todoappexam.ui.screen.home
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -196,22 +195,6 @@ fun AlertDialogComponent(
             },
             containerColor = colorResource(id = R.color.teal_200),
             textContentColor = Color.White
-        )
-    }
-}
-
-@SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
-//@Preview(showSystemUi = true)
-@Composable
-fun ContentPreview() {
-    Scaffold(
-        topBar = { TopBar() }
-    ) {
-        HomeContactScreenContent(
-            uiState = mutableStateOf(HomeViewContract.UiState()),
-            onEventDispatcher = {},
-            Modifier.padding(it)
         )
     }
 }
