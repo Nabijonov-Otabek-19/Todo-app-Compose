@@ -5,14 +5,9 @@ import uz.gita.todoappexam.data.common.TodoData
 
 interface HomeViewContract {
 
-    interface Direction {
-        suspend fun navigateToAddEditScreen(data: TodoData?)
-    }
-
-    sealed interface Intent {
-        class OpenEditContact(val updateData: TodoData) : Intent
-        class Delete(val contact: TodoData) : Intent
-        object OpenAddContact : Intent
+    interface ViewModel {
+        val uiState: StateFlow<UiState>
+        fun onEventDispatcher(intent: Intent)
     }
 
     data class UiState(
@@ -20,8 +15,13 @@ interface HomeViewContract {
         val updateData: TodoData? = null
     )
 
-    interface ViewModel {
-        val uiState: StateFlow<UiState>
-        fun onEventDispatcher(intent: Intent)
+    sealed interface Intent {
+        class OpenEditContact(val updateData: TodoData) : Intent
+        class Delete(val contact: TodoData) : Intent
+        object OpenAddContact : Intent
+    }
+
+    interface Direction {
+        suspend fun navigateToAddEditScreen(data: TodoData?)
     }
 }

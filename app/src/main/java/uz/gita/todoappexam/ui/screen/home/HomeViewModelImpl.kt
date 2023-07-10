@@ -27,7 +27,10 @@ class HomeViewModelImpl @Inject constructor(
 
     override fun onEventDispatcher(intent: HomeViewContract.Intent) {
         when (intent) {
-            is HomeViewContract.Intent.Delete -> repository.delete(intent.contact)
+            is HomeViewContract.Intent.Delete -> {
+                repository.delete(intent.contact)
+            }
+
             is HomeViewContract.Intent.OpenEditContact -> {
                 viewModelScope.launch {
                     direction.navigateToAddEditScreen(data = intent.updateData)

@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 interface RepositoryModule {
 
-    @Binds
-    @Singleton
+    @[Binds Singleton]
     fun bindAppRepository(impl: AppRepositoryImpl): AppRepository
 }

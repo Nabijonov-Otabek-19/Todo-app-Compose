@@ -57,6 +57,7 @@ class HomeScreen : AndroidScreen() {
     override fun Content() {
         val viewModel: HomeViewContract.ViewModel = getViewModel<HomeViewModelImpl>()
         val uiState = viewModel.uiState.collectAsState()
+
         TodoAppTheme {
             Surface(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
@@ -118,7 +119,8 @@ fun HomeContactScreenContent(
                 painter = painterResource(id = R.drawable.timeline),
                 contentDescription = null
             )
-        } else {
+        }
+        else {
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 content = {

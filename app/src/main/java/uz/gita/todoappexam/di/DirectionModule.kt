@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @InstallIn(ViewModelComponent::class)
 interface DirectionModule {
 
-    @Binds
-    @Singleton
+    @[Binds Singleton]
     fun bindHomeScreenDirection(impl: HomeDirection): HomeViewContract.Direction
 }
