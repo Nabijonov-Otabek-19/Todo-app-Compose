@@ -40,6 +40,7 @@ fun TodoItem(
     time: String,
     category: String,
     isDone: Boolean,
+    color: Int,
     modifier: Modifier = Modifier,
     onClick: ((Boolean) -> Unit)
 ) {
@@ -73,7 +74,7 @@ fun TodoItem(
     Card(
         modifier = modifier,
         border = BorderStroke(width = 1.dp, color = Color.Gray),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.pink))
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = color))
     ) {
 
         Row(
@@ -152,7 +153,8 @@ fun ContactItemPreview() {
     TodoItem(
         title = "David", description = "Lorem ipsum dolores programming development shit",
         date = "2023-06-04", time = "18:00",
-        category = "Home", isDone = true, Modifier.padding(16.dp)
+        category = "Home", isDone = true,
+        color = R.color.pink, modifier = Modifier.padding(16.dp)
     ) {
 
     }

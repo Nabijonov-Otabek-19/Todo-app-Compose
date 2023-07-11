@@ -30,8 +30,10 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.navigation.AppScreen
+import uz.gita.todoappexam.ui.component.ColorPickerDialog
 import uz.gita.todoappexam.ui.component.MyTextField
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
+import uz.gita.todoappexam.utils.colors
 import uz.gita.todoappexam.workmanager.setWork
 import java.time.LocalDate
 import java.time.LocalTime
@@ -62,7 +64,21 @@ fun AddContactScreenContent(
     var time by remember { mutableStateOf(updateData?.time ?: "") }
     var category by remember { mutableStateOf(updateData?.category ?: "Home") }
     var isDone by remember { mutableStateOf(updateData?.isDone ?: false) }
+    var color by remember { mutableStateOf(updateData?.color ?: R.color.white) }
     val workId by remember { mutableStateOf(updateData?.workId ?: UUID.randomUUID()) }
+
+    val showDialog = remember { mutableStateOf(false) }
+
+    if (showDialog.value) {
+        ColorPickerDialog(
+            colors = colors,
+            onColorSelected = { col ->
+                color = col
+                showDialog.value = false
+            },
+            onDismiss = { showDialog.value = false }
+        )
+    }
 
     val isUpdate = updateData != null
 
@@ -213,6 +229,10 @@ fun AddContactScreenContent(
                 )
             }
 
+            Button(onClick = { showDialog.value = true }) {
+                Text(text = "Pick a Color")
+            }
+
             ElevatedButton(
                 border = BorderStroke(width = 1.dp, color = Color.Black),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.purple_200)),
@@ -232,6 +252,7 @@ fun AddContactScreenContent(
                                     time = time,
                                     category = category,
                                     isDone = isDone,
+                                    color = color,
                                     workId = workId
                                 )
                             )
@@ -252,6 +273,7 @@ fun AddContactScreenContent(
                                     time,
                                     category = category,
                                     isDone = isDone,
+                                    color = color,
                                     workId
                                 )
                             )

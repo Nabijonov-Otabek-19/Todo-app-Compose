@@ -89,7 +89,7 @@ fun HomeContactScreenContent(
         mutableStateOf(
             TodoData(
                 -1, "", "",
-                "", "", "", false, UUID.randomUUID()
+                "", "", "", false, R.color.white, UUID.randomUUID()
             )
         )
     }
@@ -105,7 +105,9 @@ fun HomeContactScreenContent(
         )
     }
 
-    Box(modifier = modifier.fillMaxSize().background(color= Color.White)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(color = Color.White)) {
 
         when (uiState.value) {
             HomeViewContract.UIState.Loading -> {
@@ -148,6 +150,7 @@ fun HomeContactScreenContent(
                                     time = todoData[it].time,
                                     category = todoData[it].category,
                                     isDone = todoData[it].isDone,
+                                    color = todoData[it].color,
                                     modifier = Modifier.combinedClickable(
                                         onClick = {
                                             onEventDispatcher(

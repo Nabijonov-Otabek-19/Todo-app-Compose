@@ -15,9 +15,10 @@ data class TodoEntity(
     val time: String,
     val category : String,
     val isDone : Boolean,
+    val color : Int,
     val workId: UUID
 ) {
     fun toData() = TodoData(
-        id, title, description, date, time, category,isDone, workId
+        id, title, description, date, time, category,isDone,color, workId
     )
 }
