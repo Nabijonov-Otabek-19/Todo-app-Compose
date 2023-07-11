@@ -1,5 +1,7 @@
 package uz.gita.todoappexam.ui.screen.add
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,8 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.*
 import cafe.adriel.voyager.hilt.getViewModel
@@ -22,6 +27,7 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.navigation.AppScreen
 import uz.gita.todoappexam.ui.component.MyTextField
@@ -54,6 +60,8 @@ fun AddContactScreenContent(
     var description by remember { mutableStateOf(updateData?.description ?: "") }
     var date by remember { mutableStateOf(updateData?.date ?: "") }
     var time by remember { mutableStateOf(updateData?.time ?: "") }
+    var category by remember { mutableStateOf(updateData?.category ?: "Home") }
+    var isDone by remember { mutableStateOf(updateData?.isDone ?: false) }
     val workId by remember { mutableStateOf(updateData?.workId ?: UUID.randomUUID()) }
 
     val isUpdate = updateData != null
@@ -66,14 +74,25 @@ fun AddContactScreenContent(
     val dateDialogState = rememberMaterialDialogState()
     val timeDialogState = rememberMaterialDialogState()
 
-    Scaffold(topBar = { TopAppBar(title = { Text("Add Todo") }) })
+    Scaffold(topBar = {
+        TopAppBar(
+            title = { Text("Add Todo") },
+            modifier = Modifier.shadow(elevation = 4.dp)
+        )
+    })
     { contentPadding ->
         Column(
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier
+                .padding(contentPadding)
+                .background(color = Color.White),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Title")
+            Text(
+                modifier = Modifier.padding(start = 8.dp, top = 24.dp),
+                text = "Title",
+                fontWeight = FontWeight.Bold
+            )
             MyTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,7 +102,11 @@ fun AddContactScreenContent(
                 keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
 
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Description")
+            Text(
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                text = "Description",
+                fontWeight = FontWeight.Bold
+            )
             MyTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,15 +116,19 @@ fun AddContactScreenContent(
                 keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
 
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Date")
+            Text(
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                text = "Date",
+                fontWeight = FontWeight.Bold
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 12.dp)
+                    .padding(horizontal = 8.dp)
                     .clip(RoundedCornerShape(size = 16.dp))
                     .border(
                         width = 2.dp,
-                        color = Color(0xFFAAE9E6),
+                        color = Color.Gray,
                         shape = RoundedCornerShape(size = 16.dp)
                     )
             ) {
@@ -138,15 +165,19 @@ fun AddContactScreenContent(
                 )
             }
 
-            Text(modifier = Modifier.padding(start = 8.dp, top = 4.dp), text = "Time")
+            Text(
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
+                text = "Time",
+                fontWeight = FontWeight.Bold
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 12.dp)
+                    .padding(horizontal = 8.dp)
                     .clip(RoundedCornerShape(size = 16.dp))
                     .border(
                         width = 2.dp,
-                        color = Color(0xFFAAE9E6),
+                        color = Color.Gray,
                         shape = RoundedCornerShape(size = 16.dp)
                     )
             ) {
@@ -182,9 +213,12 @@ fun AddContactScreenContent(
                 )
             }
 
-            ElevatedButton(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 8.dp),
+            ElevatedButton(
+                border = BorderStroke(width = 1.dp, color = Color.Black),
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.purple_200)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 8.dp),
                 onClick = {
                     if (!isUpdate && title.isNotEmpty() && description.isNotEmpty()
                         && time.isNotEmpty() && date.isNotEmpty()
@@ -196,6 +230,8 @@ fun AddContactScreenContent(
                                     description = description,
                                     date = date,
                                     time = time,
+                                    category = category,
+                                    isDone = isDone,
                                     workId = workId
                                 )
                             )
@@ -203,8 +239,7 @@ fun AddContactScreenContent(
                         setWork(context, date, time, title, description, workId)
                         navigator.pop()
 
-                    }
-                    else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()
+                    } else if (isUpdate && title.isNotEmpty() && description.isNotEmpty()
                         && time.isNotEmpty() && date.isNotEmpty()
                     ) {
                         onEventDispatcher(
@@ -215,6 +250,8 @@ fun AddContactScreenContent(
                                     description,
                                     date,
                                     time,
+                                    category = category,
+                                    isDone = isDone,
                                     workId
                                 )
                             )
@@ -224,7 +261,7 @@ fun AddContactScreenContent(
 
                     }
                 }) {
-                Text(text = "Add")
+                Text(text = "Add", fontSize = 18.sp, modifier = Modifier.padding(6.dp))
             }
         }
 

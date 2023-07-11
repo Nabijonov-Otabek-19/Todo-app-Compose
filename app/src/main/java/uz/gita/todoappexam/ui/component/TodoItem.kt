@@ -1,15 +1,29 @@
 package uz.gita.todoappexam.ui.component
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +38,10 @@ fun TodoItem(
     description: String,
     date: String,
     time: String,
-    modifier: Modifier = Modifier
+    category: String,
+    isDone: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: ((Boolean) -> Unit)
 ) {
 
     val userSelectedDateTime = Calendar.getInstance()
@@ -51,75 +68,92 @@ fun TodoItem(
         LocalDateTime.now().hour, LocalDateTime.now().minute
     )
 
-    Card(modifier = modifier) {
-        Column(
+    var checked by remember { mutableStateOf(isDone) }
+
+    Card(
+        modifier = modifier,
+        border = BorderStroke(width = 1.dp, color = Color.Gray),
+        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.pink))
+    ) {
+
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(vertical = 8.dp)
         ) {
-
-            Row(
+            Checkbox(
+                checked = checked,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                Text(
-                    text = title,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .width(0.dp)
-                        .weight(1f),
-                    style = if (userSelectedDateTime < todayDateTime) TextStyle(
-                        textDecoration = TextDecoration.LineThrough
-                    ) else TextStyle()
-                )
-
-                Image(
-                    painter = painterResource(
-                        id =
-                        if (userSelectedDateTime < todayDateTime) R.drawable.ic_done
-                        else R.drawable.ic_time
-                    ),
-                    contentDescription = null
-                )
-            }
-
-            Text(
-                text = description,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically)
+                    .padding(horizontal = 6.dp),
+                onCheckedChange = {
+                    checked = !checked
+                    onClick.invoke(checked)
+                }
             )
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp)
             ) {
-                Text(
-                    text = date,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        style = if (isDone) TextStyle(
+                            textDecoration = TextDecoration.LineThrough
+                        ) else TextStyle()
+                    )
 
-                Text(
-                    text = time,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
+                    Text(
+                        text = category,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Row(
                     modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .align(Alignment.CenterEnd)
-                )
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .width(0.dp)
+                            .weight(1f)
+                            .padding(end = 14.dp),
+                        text = description,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        text = time,
+                        fontSize = 14.sp
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun ContactItemPreview() {
-    TodoItem(title = "David", description = "Watson", date = "2023-06-04", time = "18:00")
+    TodoItem(
+        title = "David", description = "Lorem ipsum dolores programming development shit",
+        date = "2023-06-04", time = "18:00",
+        category = "Home", isDone = true, Modifier.padding(16.dp)
+    ) {
+
+    }
 }

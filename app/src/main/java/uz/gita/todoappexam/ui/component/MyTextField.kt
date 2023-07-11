@@ -48,11 +48,11 @@ fun MyTextField(
             Box(
                 modifier = modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(size = 16.dp))
+                    .clip(RoundedCornerShape(size = 12.dp))
                     .border(
                         width = 2.dp,
-                        color = Color(0xFFAAE9E6),
-                        shape = RoundedCornerShape(size = 16.dp)
+                        color = Color.Gray,
+                        shape = RoundedCornerShape(size = 12.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 12.dp), // inner padding
             ) {
@@ -70,7 +70,7 @@ fun MyTextField(
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun MyTextFieldPreview() {
     var value by remember {
@@ -78,7 +78,7 @@ fun MyTextFieldPreview() {
     }
     TodoAppTheme {
         MyTextField(
-            modifier = Modifier, placeholder = "", value = value,
+            modifier = Modifier.padding(8.dp), placeholder = "", value = value,
             keyboardOption = KeyboardOptions(keyboardType = KeyboardType.Text)
         ) {
             value = it

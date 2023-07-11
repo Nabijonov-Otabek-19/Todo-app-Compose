@@ -11,10 +11,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.hilt.getViewModel
@@ -65,12 +67,13 @@ fun TopBar() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.Blue)
+            .shadow(elevation = 4.dp)
+            .background(color = Color.White)
             .height(56.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Todo List", fontSize = 24.sp, color = Color.White)
+        Text(text = "Todo List", fontSize = 24.sp, color = Color.Black)
     }
 }
 
@@ -83,8 +86,15 @@ fun HomeContactScreenContent(
 ) {
     val showDialog = remember { mutableStateOf(false) }
     val data = remember {
-        mutableStateOf(TodoData(-1, "", "", "", "", UUID.randomUUID()))
+        mutableStateOf(
+            TodoData(
+                -1, "", "",
+                "", "", "", false, UUID.randomUUID()
+            )
+        )
     }
+
+    val context = LocalContext.current
 
     if (showDialog.value) {
         AlertDialogComponent(
@@ -95,7 +105,7 @@ fun HomeContactScreenContent(
         )
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize().background(color= Color.White)) {
 
         when (uiState.value) {
             HomeViewContract.UIState.Loading -> {
@@ -109,15 +119,25 @@ fun HomeContactScreenContent(
                 if (todoData.isEmpty()) {
                     Image(
                         modifier = Modifier
-                            .size(200.dp)
+                            .size(180.dp)
                             .align(Alignment.Center),
                         painter = painterResource(id = R.drawable.timeline),
                         contentDescription = null
                     )
                 } else {
                     LazyColumn(
-                        modifier = Modifier.padding(horizontal = 8.dp),
+                        modifier = Modifier.padding(horizontal = 12.dp),
                         content = {
+
+                            item {
+                                Text(
+                                    modifier = Modifier.padding(vertical = 16.dp),
+                                    text = "Upcoming",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
                             items(todoData.size) {
                                 Spacer(modifier = Modifier.size(8.dp))
 
@@ -126,6 +146,8 @@ fun HomeContactScreenContent(
                                     description = todoData[it].description,
                                     date = todoData[it].date,
                                     time = todoData[it].time,
+                                    category = todoData[it].category,
+                                    isDone = todoData[it].isDone,
                                     modifier = Modifier.combinedClickable(
                                         onClick = {
                                             onEventDispatcher(
@@ -137,7 +159,9 @@ fun HomeContactScreenContent(
                                             showDialog.value = true
                                         }
                                     )
-                                )
+                                ) { state ->
+                                    toast(context, state.toString())
+                                }
                             }
                         })
                 }
