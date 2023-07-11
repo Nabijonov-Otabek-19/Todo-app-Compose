@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.*
-import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -24,6 +23,7 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.data.common.TodoData
+import uz.gita.todoappexam.navigation.AppScreen
 import uz.gita.todoappexam.ui.component.MyTextField
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
 import uz.gita.todoappexam.workmanager.setWork
@@ -31,10 +31,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
 
-class AddScreen(private val updateData: TodoData?) : AndroidScreen() {
+class AddScreen(private val updateData: TodoData?) : AppScreen() {
     @Composable
     override fun Content() {
-        val viewModel: AddEditContract.ViewModel = getViewModel<AddTodoViewModelImpl>()
+        val viewModel: AddEditContract.ViewModel = getViewModel<AddViewModelImpl>()
 
         TodoAppTheme {
             Surface(modifier = Modifier.fillMaxSize()) {

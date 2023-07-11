@@ -1,68 +1,54 @@
 package uz.gita.todoappexam.ui.screen.home
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.DialogProperties
-import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
+import uz.gita.todoappexam.navigation.AppScreen
+import uz.gita.todoappexam.ui.component.LoadingComponent
 import uz.gita.todoappexam.ui.component.TodoItem
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
+import uz.gita.todoappexam.utils.toast
 import uz.gita.todoappexam.workmanager.cancelWork
 import java.util.UUID
 
-class HomeScreen : AndroidScreen() {
+class HomeScreen : AppScreen() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val viewModel: HomeViewContract.ViewModel = getViewModel<HomeViewModelImpl>()
-        val uiState = viewModel.uiState.collectAsState()
+        val uiState = viewModel.collectAsState()
+        val context = LocalContext.current
+
+        viewModel.collectSideEffect { sideEffect ->
+            when (sideEffect) {
+                is HomeViewContract.SideEffect.Toast -> {
+                    toast(context, sideEffect.message)
+                }
+            }
+        }
 
         TodoAppTheme {
             Surface(modifier = Modifier.fillMaxSize()) {
-                Scaffold(
-                    topBar = { TopBar() }
-                ) {
+                Scaffold(topBar = { TopBar() }) {
                     HomeContactScreenContent(
                         uiState = uiState,
                         viewModel::onEventDispatcher,
@@ -91,7 +77,7 @@ fun TopBar() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContactScreenContent(
-    uiState: State<HomeViewContract.UiState>,
+    uiState: State<HomeViewContract.UIState>,
     onEventDispatcher: (intent: HomeViewContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -111,39 +97,52 @@ fun HomeContactScreenContent(
 
     Box(modifier = modifier.fillMaxSize()) {
 
-        if (uiState.value.contacts.isEmpty()) {
-            Image(
-                modifier = Modifier
-                    .size(200.dp)
-                    .align(Alignment.Center),
-                painter = painterResource(id = R.drawable.timeline),
-                contentDescription = null
-            )
-        }
-        else {
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                content = {
-                    items(uiState.value.contacts) {
-                        Spacer(modifier = Modifier.size(8.dp))
+        when (uiState.value) {
+            HomeViewContract.UIState.Loading -> {
+                LoadingComponent()
+                onEventDispatcher.invoke(HomeViewContract.Intent.LoadTodos)
+            }
 
-                        TodoItem(
-                            title = it.title,
-                            description = it.description,
-                            date = it.date,
-                            time = it.time,
-                            modifier = Modifier.combinedClickable(
-                                onClick = {
-                                    onEventDispatcher(HomeViewContract.Intent.OpenEditContact(it))
-                                },
-                                onLongClick = {
-                                    data.value = it
-                                    showDialog.value = true
-                                }
-                            )
-                        )
-                    }
-                })
+            is HomeViewContract.UIState.PrepareData -> {
+                val todoData = (uiState.value as HomeViewContract.UIState.PrepareData).todos
+
+                if (todoData.isEmpty()) {
+                    Image(
+                        modifier = Modifier
+                            .size(200.dp)
+                            .align(Alignment.Center),
+                        painter = painterResource(id = R.drawable.timeline),
+                        contentDescription = null
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        content = {
+                            items(todoData.size) {
+                                Spacer(modifier = Modifier.size(8.dp))
+
+                                TodoItem(
+                                    title = todoData[it].title,
+                                    description = todoData[it].description,
+                                    date = todoData[it].date,
+                                    time = todoData[it].time,
+                                    modifier = Modifier.combinedClickable(
+                                        onClick = {
+                                            onEventDispatcher(
+                                                HomeViewContract.Intent.OpenEditContact(todoData[it])
+                                            )
+                                        },
+                                        onLongClick = {
+                                            data.value = todoData[it]
+                                            showDialog.value = true
+                                        }
+                                    )
+                                )
+                            }
+                        })
+                }
+
+            }
         }
 
         FloatingActionButton(

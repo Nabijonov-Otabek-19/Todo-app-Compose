@@ -7,14 +7,19 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class AddTodoViewModelImpl @Inject constructor(
+class AddViewModelImpl @Inject constructor(
     private val repository: AppRepository
 ) : AddEditContract.ViewModel, ViewModel() {
 
     override fun onEventDispatcher(intent: AddEditContract.Intent) {
         when (intent) {
-            is AddEditContract.Intent.AddContact -> repository.add(intent.addTodoData)
-            is AddEditContract.Intent.UpdateContact -> repository.update(intent.updateTodoData)
+            is AddEditContract.Intent.AddContact -> {
+                repository.add(intent.addTodoData)
+            }
+
+            is AddEditContract.Intent.UpdateContact -> {
+                repository.update(intent.updateTodoData)
+            }
         }
     }
 }
