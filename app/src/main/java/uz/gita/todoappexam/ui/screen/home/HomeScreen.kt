@@ -1,6 +1,5 @@
 package uz.gita.todoappexam.ui.screen.home
 
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -14,22 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.hilt.getViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.navigation.AppScreen
+import uz.gita.todoappexam.ui.component.AlertDialogComponent
 import uz.gita.todoappexam.ui.component.LoadingComponent
 import uz.gita.todoappexam.ui.component.TodoItem
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
 import uz.gita.todoappexam.utils.toast
-import uz.gita.todoappexam.workmanager.cancelWork
 import java.util.UUID
 
 class HomeScreen : AppScreen() {
@@ -246,46 +243,5 @@ fun HomeContactScreenContent(
             }) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White)
         }
-    }
-}
-
-@Composable
-fun AlertDialogComponent(
-    onEventDispatcher: (intent: HomeViewContract.Intent) -> Unit,
-    data: TodoData,
-    show: Boolean,
-    showDialog: MutableState<Boolean>
-) {
-    val context = LocalContext.current
-    val openDialog = remember { mutableStateOf(show) }
-
-    if (openDialog.value) {
-        AlertDialog(
-            properties = DialogProperties(dismissOnClickOutside = false),
-            onDismissRequest = { openDialog.value = false },
-            title = { Text(text = "Warning", color = Color.White) },
-            text = { Text("Do you want to delete ?", color = Color.White) },
-
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        cancelWork(context, data.workId)
-                        onEventDispatcher(HomeViewContract.Intent.Delete(data))
-                        openDialog.value = false
-                        showDialog.value = false
-                        Toast.makeText(context, "Item deleted", Toast.LENGTH_LONG).show()
-                    }
-                ) { Text("Confirm", color = Color.White) }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    openDialog.value = false
-                    showDialog.value = false
-                })
-                { Text("Dismiss", color = Color.White) }
-            },
-            containerColor = colorResource(id = R.color.teal_200),
-            textContentColor = Color.White
-        )
     }
 }
