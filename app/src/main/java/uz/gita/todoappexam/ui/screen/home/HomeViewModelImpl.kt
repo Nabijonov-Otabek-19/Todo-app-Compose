@@ -24,10 +24,18 @@ class HomeViewModelImpl @Inject constructor(
     override fun onEventDispatcher(intent: HomeViewContract.Intent) {
         when (intent) {
             HomeViewContract.Intent.LoadTodos -> {
-                repository.retrieveAllContacts()
-                    .onEach {
-                        intent { reduce { HomeViewContract.UIState.PrepareData(it) } }
-                    }.launchIn(viewModelScope)
+                repository.getUpcomingTodos().onEach {
+                    intent { reduce { HomeViewContract.UIState.PrepareUpcomingData(it) } }
+                }.launchIn(viewModelScope)
+
+                repository.getCompletedTodos().onEach {
+                    intent { reduce { HomeViewContract.UIState.PrepareCompletedData(it) } }
+                }.launchIn(viewModelScope)
+
+            }
+
+            is HomeViewContract.Intent.UpdateState -> {
+                repository.updateCompletion(intent.state)
             }
 
             is HomeViewContract.Intent.Delete -> {

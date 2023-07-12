@@ -18,4 +18,13 @@ interface TodoDao {
 
     @Query("Select * from todos")
     fun retrieveAllContacts(): Flow<List<TodoEntity>>
+
+    @Query("Select * from todos Where isDone=0")
+    fun getUpcomingTodos(): Flow<List<TodoEntity>>
+
+    @Query("Select * from todos Where isDone=1")
+    fun getCompletedTodos(): Flow<List<TodoEntity>>
+
+    @Query("Update todos set isDone = :state")
+    fun updateCompletion(state: Boolean)
 }

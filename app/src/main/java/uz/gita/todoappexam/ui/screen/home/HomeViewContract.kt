@@ -11,7 +11,8 @@ interface HomeViewContract {
 
     sealed interface UIState {
         object Loading : UIState
-        data class PrepareData(val todos: List<TodoData>) : UIState
+        data class PrepareUpcomingData(val upcomingTodos: List<TodoData>) : UIState
+        data class PrepareCompletedData(val completedTodos: List<TodoData>) : UIState
     }
 
     sealed interface SideEffect {
@@ -21,6 +22,7 @@ interface HomeViewContract {
     sealed interface Intent {
         class OpenEditContact(val updateData: TodoData) : Intent
         class Delete(val contact: TodoData) : Intent
+        class UpdateState(val state: Boolean) : Intent
         object OpenAddContact : Intent
         object LoadTodos : Intent
     }
