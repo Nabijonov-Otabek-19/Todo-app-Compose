@@ -17,5 +17,11 @@ val colors = listOf(
     R.color.yellow,
     R.color.red,
     R.color.green,
-    R.color.pink
+    R.color.pink,
+    R.color.orange,
+    R.color.blue
+)
+
+val categories = listOf(
+    "Home", "Work", "Study", "Sport", "Social", "Grocery"
 )

@@ -30,9 +30,11 @@ import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.R
 import uz.gita.todoappexam.data.common.TodoData
 import uz.gita.todoappexam.navigation.AppScreen
+import uz.gita.todoappexam.ui.component.CategoryPickerDialog
 import uz.gita.todoappexam.ui.component.ColorPickerDialog
 import uz.gita.todoappexam.ui.component.MyTextField
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
+import uz.gita.todoappexam.utils.categories
 import uz.gita.todoappexam.utils.colors
 import uz.gita.todoappexam.workmanager.setWork
 import java.time.LocalDate
@@ -67,17 +69,28 @@ fun AddContactScreenContent(
     var color by remember { mutableStateOf(updateData?.color ?: R.color.white) }
     val workId by remember { mutableStateOf(updateData?.workId ?: UUID.randomUUID()) }
 
-    val showDialog = remember { mutableStateOf(false) }
+    var showColorPickerDialog by remember { mutableStateOf(false) }
+    var showCategoryDialog by remember { mutableStateOf(false) }
 
-    if (showDialog.value) {
+    if (showColorPickerDialog) {
         ColorPickerDialog(
             colors = colors,
             onColorSelected = { col ->
                 color = col
-                showDialog.value = false
+                showColorPickerDialog = false
             },
-            onDismiss = { showDialog.value = false }
+            onDismiss = { showColorPickerDialog = false }
         )
+    }
+
+    if (showCategoryDialog) {
+        CategoryPickerDialog(
+            categories = categories,
+            onSelected = { categ ->
+                category = categ
+                showCategoryDialog = false
+            },
+            onDismiss = { showCategoryDialog = false })
     }
 
     val isUpdate = updateData != null
@@ -229,8 +242,17 @@ fun AddContactScreenContent(
                 )
             }
 
-            Button(onClick = { showDialog.value = true }) {
-                Text(text = "Pick a Color")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = { showCategoryDialog = true }) {
+                    Text(text = "Category")
+                }
+
+                Button(onClick = { showColorPickerDialog = true }) {
+                    Text(text = "Color")
+                }
             }
 
             ElevatedButton(

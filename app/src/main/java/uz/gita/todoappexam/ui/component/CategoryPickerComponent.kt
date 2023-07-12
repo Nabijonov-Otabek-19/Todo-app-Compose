@@ -12,16 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import uz.gita.todoappexam.utils.categories
 import uz.gita.todoappexam.utils.colors
 
 @Composable
-fun ColorPickerDialog(
-    colors: List<Int>,
-    onColorSelected: (Int) -> Unit,
+fun CategoryPickerDialog(
+    categories: List<String>,
+    modifier: Modifier = Modifier,
+    onSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(onDismiss) {
-        Surface(modifier = Modifier.padding(16.dp)) {
+        Surface(modifier = modifier.padding(16.dp)) {
+
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -31,44 +34,54 @@ fun ColorPickerDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    ColorItem(
+                    CategoryItem(
                         color = colors[0],
-                        modifier = Modifier.clickable { onColorSelected(colors[0]) })
+                        category = categories[0],
+                        modifier = Modifier.clickable { onSelected(categories[0]) })
 
-                    ColorItem(
+                    CategoryItem(
                         color = colors[1],
-                        modifier = Modifier.clickable { onColorSelected(colors[1]) })
+                        category = categories[1],
+                        modifier = Modifier.clickable { onSelected(categories[1]) })
 
-                    ColorItem(
+                    CategoryItem(
                         color = colors[2],
-                        modifier = Modifier.clickable { onColorSelected(colors[2]) })
+                        category = categories[2],
+                        modifier = Modifier.clickable { onSelected(categories[2]) })
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    ColorItem(
+                    CategoryItem(
                         color = colors[3],
-                        modifier = Modifier.clickable { onColorSelected(colors[3]) })
+                        category = categories[3],
+                        modifier = Modifier.clickable { onSelected(categories[3]) })
 
-                    ColorItem(
+                    CategoryItem(
                         color = colors[4],
-                        modifier = Modifier.clickable { onColorSelected(colors[4]) })
+                        category = categories[4],
+                        modifier = Modifier.clickable { onSelected(categories[4]) })
 
-                    ColorItem(
+                    CategoryItem(
                         color = colors[5],
-                        modifier = Modifier.clickable { onColorSelected(colors[5]) })
+                        category = categories[5],
+                        modifier = Modifier.clickable { onSelected(categories[5]) })
                 }
             }
         }
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ColorPickerDialogPreview() {
-    ColorPickerDialog(colors = colors, onColorSelected = {}) {
-
-    }
+fun CategoryPickerDialogPreview() {
+    CategoryPickerDialog(
+        categories = categories,
+        modifier = Modifier.padding(8.dp),
+        onSelected = {},
+        onDismiss = {}
+    )
 }
