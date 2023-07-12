@@ -1,6 +1,5 @@
 package uz.gita.todoappexam.ui.screen.add
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.*
@@ -26,7 +26,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import uz.gita.todoappexam.R
@@ -35,6 +37,7 @@ import uz.gita.todoappexam.navigation.AppScreen
 import uz.gita.todoappexam.ui.component.CategoryPickerDialog
 import uz.gita.todoappexam.ui.component.ColorPickerDialog
 import uz.gita.todoappexam.ui.component.MyTextField
+import uz.gita.todoappexam.ui.theme.Light_Blue
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
 import uz.gita.todoappexam.utils.categories
 import uz.gita.todoappexam.utils.colors
@@ -157,11 +160,11 @@ fun AddContactScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .clip(RoundedCornerShape(size = 16.dp))
+                    .clip(RoundedCornerShape(size = 8.dp))
                     .border(
                         width = 2.dp,
-                        color = Color.Gray,
-                        shape = RoundedCornerShape(size = 16.dp)
+                        color = colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(size = 8.dp)
                     )
             ) {
                 TextField(
@@ -206,11 +209,11 @@ fun AddContactScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .clip(RoundedCornerShape(size = 16.dp))
+                    .clip(RoundedCornerShape(size = 8.dp))
                     .border(
                         width = 2.dp,
-                        color = Color.Gray,
-                        shape = RoundedCornerShape(size = 16.dp)
+                        color = colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(size = 8.dp)
                     )
             ) {
                 TextField(
@@ -252,23 +255,25 @@ fun AddContactScreenContent(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.blue)
+                    ),
                     onClick = { showCategoryDialog = true },
                     shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(text = "Category")
-                }
+                ) { Text(text = "Category", color = Color.White) }
 
                 Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.blue)
+                    ),
                     onClick = { showColorPickerDialog = true },
                     shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(text = "Color")
-                }
+                ) { Text(text = "Color", color = Color.White) }
             }
 
-            ElevatedButton(
-                border = BorderStroke(width = 1.dp, color = Color.Black),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.purple_200)),
+            Button(
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp, horizontal = 8.dp),
@@ -316,18 +321,25 @@ fun AddContactScreenContent(
 
                     }
                 }) {
-                Text(text = "Add", fontSize = 18.sp, modifier = Modifier.padding(6.dp))
+                Text(
+                    text = "Add", fontSize = 18.sp,
+                    color = Color.White, modifier = Modifier.padding(6.dp)
+                )
             }
         }
 
         MaterialDialog(
             dialogState = dateDialogState,
             buttons = {
-                positiveButton(text = "Ok") {}
-                negativeButton(text = "Cancel")
+                positiveButton(text = "Ok", textStyle = TextStyle(color = Color.Blue)) {}
+                negativeButton(text = "Cancel", textStyle = TextStyle(color = Color.Blue))
             }
         ) {
             datepicker(
+                colors = DatePickerDefaults.colors(
+                    headerBackgroundColor = Color.Blue,
+                    dateActiveBackgroundColor = Color.Blue
+                ),
                 initialDate = LocalDate.now(),
                 title = "Pick a date",
                 yearRange = IntRange(LocalDate.now().year, LocalDate.now().year + 20),
@@ -335,24 +347,25 @@ fun AddContactScreenContent(
                     it.monthValue >= currentDate.monthValue
                             && it.dayOfMonth >= currentDate.dayOfMonth
                 }
-            ) {
-                date = it.toString()
-            }
+            ) { date = it.toString() }
         }
 
         MaterialDialog(
             dialogState = timeDialogState,
             buttons = {
-                positiveButton(text = "Ok") {}
-                negativeButton(text = "Cancel")
+                positiveButton(text = "Ok", textStyle = TextStyle(color = Color.Blue)) {}
+                negativeButton(text = "Cancel", textStyle = TextStyle(color = Color.Blue))
             }
         ) {
             timepicker(
+                colors = TimePickerDefaults.colors(
+                    activeBackgroundColor = Color.Blue,
+                    inactiveBackgroundColor = Light_Blue,
+                    selectorColor = Color.Blue
+                ),
                 initialTime = LocalTime.NOON,
                 title = "Pick a time"
-            ) {
-                time = it.toString()
-            }
+            ) { time = it.toString() }
         }
     }
 }

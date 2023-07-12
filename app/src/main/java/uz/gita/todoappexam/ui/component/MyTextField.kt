@@ -16,12 +16,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import uz.gita.todoappexam.R
 import uz.gita.todoappexam.ui.theme.TodoAppTheme
 
 @Composable
@@ -36,9 +38,7 @@ fun MyTextField(
     BasicTextField(
         keyboardOptions = keyboardOption,
         value = value,
-        onValueChange = { newText ->
-            onValueChange.invoke(newText)
-        },
+        onValueChange = { newText -> onValueChange.invoke(newText) },
         textStyle = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
@@ -48,11 +48,11 @@ fun MyTextField(
             Box(
                 modifier = modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(size = 12.dp))
+                    .clip(RoundedCornerShape(size = 8.dp))
                     .border(
                         width = 2.dp,
-                        color = Color.Gray,
-                        shape = RoundedCornerShape(size = 12.dp)
+                        color = colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(size = 8.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 12.dp), // inner padding
             ) {
