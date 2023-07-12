@@ -19,12 +19,6 @@ interface TodoDao {
     @Query("Select * from todos")
     fun retrieveAllContacts(): Flow<List<TodoEntity>>
 
-    @Query("Select * from todos Where isDone=0")
-    fun getUpcomingTodos(): Flow<List<TodoEntity>>
-
-    @Query("Select * from todos Where isDone=1")
-    fun getCompletedTodos(): Flow<List<TodoEntity>>
-
-    @Query("Update todos set isDone = :state")
-    fun updateCompletion(state: Boolean)
+    @Query("Update todos set isDone = :state WHERE id = :todoId")
+    fun updateCompletion(state: Boolean, todoId : Long)
 }

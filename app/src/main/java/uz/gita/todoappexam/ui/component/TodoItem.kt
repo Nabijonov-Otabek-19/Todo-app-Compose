@@ -34,6 +34,7 @@ import java.util.Calendar
 
 @Composable
 fun TodoItem(
+    id: Long,
     title: String,
     description: String,
     date: String,
@@ -42,7 +43,7 @@ fun TodoItem(
     isDone: Boolean,
     color: Int,
     modifier: Modifier = Modifier,
-    onClick: ((Boolean) -> Unit)
+    onClick: ((Boolean, Long) -> Unit)
 ) {
 
     val userSelectedDateTime = Calendar.getInstance()
@@ -89,7 +90,7 @@ fun TodoItem(
                     .padding(horizontal = 6.dp),
                 onCheckedChange = {
                     checked = !checked
-                    onClick.invoke(checked)
+                    onClick.invoke(checked, id)
                 }
             )
 
@@ -151,11 +152,11 @@ fun TodoItem(
 @Preview(showBackground = true)
 fun ContactItemPreview() {
     TodoItem(
+        id = 0,
         title = "David", description = "Lorem ipsum dolores programming development shit",
         date = "2023-06-04", time = "18:00",
         category = "Home", isDone = true,
         color = R.color.pink, modifier = Modifier.padding(16.dp)
-    ) {
-
+    ) { b, t ->
     }
 }

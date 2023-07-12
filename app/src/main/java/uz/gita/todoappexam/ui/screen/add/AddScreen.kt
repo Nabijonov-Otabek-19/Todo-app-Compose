@@ -4,8 +4,10 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
@@ -65,7 +67,7 @@ fun AddContactScreenContent(
     var date by remember { mutableStateOf(updateData?.date ?: "") }
     var time by remember { mutableStateOf(updateData?.time ?: "") }
     var category by remember { mutableStateOf(updateData?.category ?: "Home") }
-    var isDone by remember { mutableStateOf(updateData?.isDone ?: false) }
+    val isDone by remember { mutableStateOf(updateData?.isDone ?: false) }
     var color by remember { mutableStateOf(updateData?.color ?: R.color.white) }
     val workId by remember { mutableStateOf(updateData?.workId ?: UUID.randomUUID()) }
 
@@ -113,9 +115,10 @@ fun AddContactScreenContent(
         Column(
             modifier = Modifier
                 .padding(contentPadding)
+                .verticalScroll(state = rememberScrollState(), enabled = true)
                 .background(color = Color.White),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             Text(
                 modifier = Modifier.padding(start = 8.dp, top = 24.dp),
@@ -243,14 +246,22 @@ fun AddContactScreenContent(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(onClick = { showCategoryDialog = true }) {
+                Button(
+                    onClick = { showCategoryDialog = true },
+                    shape = RoundedCornerShape(8.dp)
+                ) {
                     Text(text = "Category")
                 }
 
-                Button(onClick = { showColorPickerDialog = true }) {
+                Button(
+                    onClick = { showColorPickerDialog = true },
+                    shape = RoundedCornerShape(8.dp)
+                ) {
                     Text(text = "Color")
                 }
             }

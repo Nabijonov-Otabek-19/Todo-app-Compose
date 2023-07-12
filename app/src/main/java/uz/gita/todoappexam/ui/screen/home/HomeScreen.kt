@@ -95,8 +95,6 @@ fun HomeContactScreenContent(
         )
     }
 
-    val context = LocalContext.current
-
     if (showDialog.value) {
         AlertDialogComponent(
             onEventDispatcher = onEventDispatcher,
@@ -118,11 +116,10 @@ fun HomeContactScreenContent(
                 onEventDispatcher.invoke(HomeViewContract.Intent.LoadTodos)
             }
 
-            is HomeViewContract.UIState.PrepareUpcomingData -> {
-                val upcomingData =
-                    (uiState.value as HomeViewContract.UIState.PrepareUpcomingData).upcomingTodos
+            is HomeViewContract.UIState.PrepareData -> {
+                val todoList = (uiState.value as HomeViewContract.UIState.PrepareData).todoList
 
-                if (upcomingData.isEmpty()) {
+                if (todoList.isEmpty()) {
                     Image(
                         modifier = Modifier
                             .size(180.dp)
@@ -131,110 +128,110 @@ fun HomeContactScreenContent(
                         contentDescription = null
                     )
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        content = {
 
-                            item {
-                                Text(
-                                    modifier = Modifier.padding(vertical = 16.dp),
-                                    text = "Upcoming",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        LazyColumn(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            content = {
 
-                            items(upcomingData.size) {
-                                Spacer(modifier = Modifier.size(8.dp))
+                                item {
+                                    Text(
+                                        modifier = Modifier.padding(vertical = 16.dp),
+                                        text = "Upcoming",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
 
-                                TodoItem(
-                                    title = upcomingData[it].title,
-                                    description = upcomingData[it].description,
-                                    date = upcomingData[it].date,
-                                    time = upcomingData[it].time,
-                                    category = upcomingData[it].category,
-                                    isDone = upcomingData[it].isDone,
-                                    color = upcomingData[it].color,
-                                    modifier = Modifier.combinedClickable(
-                                        onClick = {
+                                items(todoList.size) {
+                                    Spacer(modifier = Modifier.size(8.dp))
+
+                                    if (!todoList[it].isDone) {
+                                        TodoItem(
+                                            id = todoList[it].id,
+                                            title = todoList[it].title,
+                                            description = todoList[it].description,
+                                            date = todoList[it].date,
+                                            time = todoList[it].time,
+                                            category = todoList[it].category,
+                                            isDone = todoList[it].isDone,
+                                            color = todoList[it].color,
+                                            modifier = Modifier.combinedClickable(
+                                                onClick = {
+                                                    onEventDispatcher(
+                                                        HomeViewContract.Intent.OpenEditContact(
+                                                            todoList[it]
+                                                        )
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    data.value = todoList[it]
+                                                    showDialog.value = true
+                                                }
+                                            )
+                                        ) { state, todoId ->
                                             onEventDispatcher(
-                                                HomeViewContract.Intent.OpenEditContact(
-                                                    upcomingData[it]
+                                                HomeViewContract.Intent.UpdateState(
+                                                    state,
+                                                    todoId
                                                 )
                                             )
-                                        },
-                                        onLongClick = {
-                                            data.value = upcomingData[it]
-                                            showDialog.value = true
+                                            onEventDispatcher(HomeViewContract.Intent.LoadTodos)
                                         }
-                                    )
-                                ) { state ->
-                                    onEventDispatcher(HomeViewContract.Intent.UpdateState(state))
-                                    onEventDispatcher(HomeViewContract.Intent.LoadTodos)
+                                    }
                                 }
-                            }
-                        })
-                }
-            }
+                            })
 
-            is HomeViewContract.UIState.PrepareCompletedData -> {
-                val completedData =
-                    (uiState.value as HomeViewContract.UIState.PrepareCompletedData).completedTodos
+                        LazyColumn(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            content = {
 
-                if (completedData.isEmpty()) {
-                    Image(
-                        modifier = Modifier
-                            .size(180.dp)
-                            .align(Alignment.Center),
-                        painter = painterResource(id = R.drawable.timeline),
-                        contentDescription = null
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        content = {
+                                item {
+                                    Text(
+                                        modifier = Modifier.padding(vertical = 16.dp),
+                                        text = "Completed",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
 
-                            item {
-                                Text(
-                                    modifier = Modifier.padding(vertical = 16.dp),
-                                    text = "Completed",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                                items(todoList.size) {
+                                    Spacer(modifier = Modifier.size(8.dp))
 
-                            items(completedData.size) {
-                                Spacer(modifier = Modifier.size(8.dp))
-
-                                TodoItem(
-                                    title = completedData[it].title,
-                                    description = completedData[it].description,
-                                    date = completedData[it].date,
-                                    time = completedData[it].time,
-                                    category = completedData[it].category,
-                                    isDone = completedData[it].isDone,
-                                    color = completedData[it].color,
-                                    modifier = Modifier.combinedClickable(
-                                        onClick = {
-                                            onEventDispatcher(
-                                                HomeViewContract.Intent.OpenEditContact(
-                                                    completedData[it]
-                                                )
+                                    if (todoList[it].isDone) {
+                                        TodoItem(
+                                            id = todoList[it].id,
+                                            title = todoList[it].title,
+                                            description = todoList[it].description,
+                                            date = todoList[it].date,
+                                            time = todoList[it].time,
+                                            category = todoList[it].category,
+                                            isDone = todoList[it].isDone,
+                                            color = todoList[it].color,
+                                            modifier = Modifier.combinedClickable(
+                                                onClick = {
+                                                    onEventDispatcher(
+                                                        HomeViewContract.Intent.OpenEditContact(
+                                                            todoList[it]
+                                                        )
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    data.value = todoList[it]
+                                                    showDialog.value = true
+                                                }
                                             )
-                                        },
-                                        onLongClick = {
-                                            data.value = completedData[it]
-                                            showDialog.value = true
+                                        ) { state, todoId ->
+                                            onEventDispatcher(
+                                                HomeViewContract.Intent.UpdateState(state, todoId)
+                                            )
+                                            onEventDispatcher(HomeViewContract.Intent.LoadTodos)
                                         }
-                                    )
-                                ) { state ->
-                                    onEventDispatcher(HomeViewContract.Intent.UpdateState(state))
-                                    onEventDispatcher(HomeViewContract.Intent.LoadTodos)
+                                    }
                                 }
-                            }
-                        })
+                            })
+                    }
                 }
-
             }
         }
 

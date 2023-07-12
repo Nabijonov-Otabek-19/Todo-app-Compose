@@ -9,8 +9,5 @@ interface AppRepository {
     fun update(todoData: TodoData)
     fun delete(todoData: TodoData)
     fun retrieveAllContacts(): Flow<List<TodoData>>
-
-    fun getUpcomingTodos(): Flow<List<TodoData>>
-    fun getCompletedTodos(): Flow<List<TodoData>>
-    fun updateCompletion(state: Boolean)
+    fun updateCompletion(state: Boolean, todoId: Long)
 }

@@ -28,7 +28,7 @@ fun CategoryPickerDialog(
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 20.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

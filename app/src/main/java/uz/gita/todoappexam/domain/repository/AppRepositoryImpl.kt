@@ -27,17 +27,7 @@ class AppRepositoryImpl @Inject constructor(
             list.map { it.toData() }
         }
 
-    override fun getUpcomingTodos(): Flow<List<TodoData>> =
-        dao.getUpcomingTodos().map { list ->
-            list.map { it.toData() }
-        }
-
-    override fun getCompletedTodos(): Flow<List<TodoData>> =
-        dao.getCompletedTodos().map { list ->
-            list.map { it.toData() }
-        }
-
-    override fun updateCompletion(state: Boolean) {
-        dao.updateCompletion(state)
+    override fun updateCompletion(state: Boolean, todoId: Long) {
+        dao.updateCompletion(state, todoId)
     }
 }
