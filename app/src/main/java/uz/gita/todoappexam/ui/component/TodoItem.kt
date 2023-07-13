@@ -105,12 +105,18 @@ fun TodoItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
+                        modifier = Modifier
+                            .width(0.dp)
+                            .weight(1f)
+                            .padding(end = 8.dp),
                         text = title,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         style = if (isDone) TextStyle(
                             textDecoration = TextDecoration.LineThrough
-                        ) else TextStyle()
+                        ) else TextStyle(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     Text(
@@ -156,7 +162,7 @@ fun ContactItemPreview() {
         title = "David", description = "Lorem ipsum dolores programming development shit",
         date = "2023-06-04", time = "18:00",
         category = "Home", isDone = true,
-        color = R.color.pink, modifier = Modifier.padding(16.dp)
-    ) { b, t ->
+        color = R.color.orange, modifier = Modifier.padding(16.dp)
+    ) { state, id ->
     }
 }
