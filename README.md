@@ -3,3 +3,5 @@
 Screenshots : 
 
 <img src="https://github.com/Nabijonov-Otabek-19/Todo-app-Compose/assets/81671570/30ab8832-70f0-4dea-83f9-4698eb9fa081" width="200" height="400">
+<img src="https://github.com/Nabijonov-Otabek-19/Todo-app-Compose/assets/81671570/2a541bbf-ba96-432e-a53a-8838c03e9728" width="200" height="400">
+
