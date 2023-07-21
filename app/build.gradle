@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'uz.gita.todoappexam'
+    namespace 'uz.nabijonov.otabek.todoapp_bek'
     compileSdk 33
 
     defaultConfig {
-        applicationId "uz.gita.todoappexam"
+        applicationId "uz.nabijonov.otabek.todoapp_bek"
         minSdk 24
         targetSdk 33
         versionCode 1
