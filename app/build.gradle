@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'com.google.dagger.hilt.android'
 }
 
@@ -52,7 +52,7 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui'
@@ -69,7 +69,7 @@ dependencies {
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.44.2"
-    kapt "com.google.dagger:hilt-compiler:2.44.2"
+    ksp "com.google.dagger:hilt-compiler:2.44.2"
 
     // Voyager
     def voyagerVersion = "1.0.0-rc06"
@@ -80,24 +80,24 @@ dependencies {
 
     // Hilt integration
     implementation("cafe.adriel.voyager:voyager-hilt:$voyagerVersion")
-    implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.1")
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
 
     // Room
     implementation 'androidx.room:room-runtime:2.5.2'
     implementation 'androidx.room:room-ktx:2.5.2'
-    kapt 'androidx.room:room-compiler:2.5.2'
+    ksp 'androidx.room:room-compiler:2.5.2'
 
     // Coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     // MVI orbit
     implementation("org.orbit-mvi:orbit-viewmodel:6.0.0")
     implementation("org.orbit-mvi:orbit-compose:6.0.0")
 
     // Lifecycle ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2"
 
     // time/date pickers
     implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
